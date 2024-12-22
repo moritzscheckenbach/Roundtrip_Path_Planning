@@ -95,7 +95,33 @@ class Roundtrip_Path_Planner:
             raise ValueError("Planner currently not supported")
         else:
             config = supportedPlanners[self.planner]
-            return config
+            print(f"Using planner: {self.planner}")
+            print(f"found default config: {config} \n Do you want to use this config? (y/n)")
+            answer = input()
+
+            if answer == "n":
+                print("Please enter the new config \n ")
+                new_config = {}
+                for key in config[1]:
+                    new_value = input(f"Enter value for {key} (default: {config[1][key]}): ")
+                    if new_value == "":
+                        new_config[key] = config[1][key]
+                    else:
+                        new_config[key] = type(config[1][key])(new_value)
+                print(f"New configuration: {new_config}")
+                print(f"Is this configuration correct? (y/n)")
+                answer = input()
+
+                if answer == "n":
+                    print("Using default config")
+                    return config
+                else:
+                    print("Using new config")                
+                    return new_config
+                
+            else:
+                print("Using default config")
+                return config
 
 
 
