@@ -20,24 +20,20 @@ import networkx as nx
 import heapq
 import math
 
-import algorithms.IPAStar as IPAStar
-import algorithms.IPBasicPRM as IPBasicPRM
-import algorithms.IPLazyPRM as IPLazyPRM
-import algorithms.IPPRMBase as IPPRMBase
-import algorithms.IPRRT as IPRRT
-import algorithms.IPVisibilityPRM as IPVisibilityPRM
+import IPAStar
+import IPBasicPRM
+import IPLazyPRM
+import IPPRMBase
+import IPRRT
+import IPVisibilityPRM
 
-import visualizations.IPVISBasicPRM as IPVISBasicPRM
-import visualizations.IPVISLazyPRM as IPVISLazyPRM
-import visualizations.IPVISVisibilityPRM as IPVISVisibilityPRM
-import visualizations.IPVISAStar as IPVISAStar
-import visualizations.IPVISRRT as IPVISRRT
+import IPVISBasicPRM
+import IPVISLazyPRM
+import IPVISVisibilityPRM
+import IPVISAStar
+import IPVISRRT
 
-import utils.IPPerfMonitor as IPPerfMonitor
-import utils.IPBenchmark as IPBenchmark
-import utils.IPEnvironment as Environment
-import utils.IPTestSuiteSS2023 as IPTestSuiteSS2023
-import utils.IPPlanerBase as IPPlanerBase 
+from IPPerfMonitor import IPPerfMonitor
 
 
 ###########################
@@ -61,15 +57,6 @@ class ResultCollection (object):
 class Roundtrip_Path_Planner:
     def __init__(self, startpos, targetlist, environment, planner):
         
-        # Initialize all necessary members
-        self.startpos = startpos # start position in configuration space
-        self.targetlist = targetlist # list of goal positions in configuration space
-        self.environment = environment # reference to Environment
-        self.planner = planner # reference to algorithm
-        self.config = self.getplannerconfig # dictionary with the needed information about the algorithms configuration options
-
-    def getplannerconfig(self):
-
         #######################
         # Planner Configuration
         #######################
@@ -123,43 +110,13 @@ class Roundtrip_Path_Planner:
         # rrtSimpleConfig["numberOfGeneratedNodes"] = 100 
         # rrtSimpleConfig["testGoalAfterNumberOfNodes"]  = 10
         # supportedPlanners["simpleRRT"] = [IPRRT.RRTSimple, rrtSimpleConfig, IPVISRRT.rrtPRMVisualize]
-
-        return supportedPlanners
-        """
-        Evtl. nutzbare Abfrage, ob der gewählte Algorithmus unterstützt wird
-        und welche Konfigurationen zur Verfügung stehen
-        """
-        # if not self.planner in supportedPlanners:
-        #     raise ValueError("Planner currently not supported")
-        # else:
-        #     config = supportedPlanners[self.planner]
-        #     print(f"Using planner: {self.planner}")
-        #     print(f"found default config: {config} \n Do you want to use this config? (y/n)")
-        #     answer = input()
-
-        #     if answer == "n":
-        #         print("Please enter the new config \n ")
-        #         new_config = {}
-        #         for key in config[1]:
-        #             new_value = input(f"Enter value for {key} (default: {config[1][key]}): ")
-        #             if new_value == "":
-        #                 new_config[key] = config[1][key]
-        #             else:
-        #                 new_config[key] = type(config[1][key])(new_value)
-        #         print(f"New configuration: {new_config}")
-        #         print(f"Is this configuration correct? (y/n)")
-        #         answer = input()
-
-        #         if answer == "n":
-        #             print("Using default config")
-        #             return config
-        #         else:
-        #             print("Using new config")                
-        #             return new_config
-                
-        #     else:
-        #         print("Using default config")
-        #         return config
+        
+        # Initialize all necessary members
+        self.startpos = startpos # start position in configuration space
+        self.targetlist = targetlist # list of goal positions in configuration space
+        self.environment = environment # reference to Environment
+        self.planner = planner # reference to algorithm
+        self.config = supportedPlanners # dictionary with the needed information about the algorithms configuration options
 
     def plan(self):
         resultList = list()
@@ -197,13 +154,3 @@ class Roundtrip_Path_Planner:
             #    throw e
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
                 pass
-
-
-######
-# Test
-######
-
-fullBenchList = IPTestSuiteSS2023.benchList
-testList = fullBenchList[0]
-
-Roundtrip_Path_Planner(testList.startList, testList.goalList, testList.environment ,"basePRM").plan()
