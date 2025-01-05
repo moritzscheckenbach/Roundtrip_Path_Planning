@@ -129,28 +129,51 @@ class Roundtrip_Path_Planner:
         IPPerfMonitor.clearData() # Löscht die Daten aus dem Dataframe des Performance Monitors
         
         """TBD: Evtl. Anpassung des Auswahlverfahrens für das nächste Ziel"""
-        usedstart = self.startpos
+        usedstart = self.startpos[0]
         goals = self.targetlist
-        usedgoal = None
+        pastgoals = []
 
-        min_distance = float('inf')
-        for goal in goals:
-            distance = math.sqrt((usedstart[0] - goal[0]) ** 2 + (usedstart[1] - goal[1]) ** 2)
-            if distance < min_distance:
-                min_distance = distance
-                usedgoal = goal
-        
+        for i in range(len(goals)):
+            min_distance = None
+            min_distance = float('inf')
+
+            for goal in goals:
+                if goal not in pastgoals:
+                    distance = math.sqrt((usedstart[0] - goal[0]) ** 2 + (usedstart[1] - goal[1]) ** 2)
+                    if distance < min_distance:
+                        min_distance = distance
+                        goal_gespeichert = goal
+            
+            # Aktualisieren des Startpunktes und der Liste der bereits besuchten Punkte
+            usedstart = goal_gespeichert # Alter Zielpunkt wird zum neuen Startpunkt
+            pastgoals.append(goal_gespeichert) # Zielpunkt wird in die Liste der bereits besuchten Punkte eingetragen
+
+        # Pfadplanung für die besuchten Ziele
+        usedstart = self.startpos[0]
+        for i in range(len(pastgoals)):
+            print(f"Pastgoals: {pastgoals}")
+            print(f"Usedstart: {usedstart}")
+            tmp_1 = []
+            tmp_1.append(pastgoals[i])
+            tmp_2 = []
+            tmp_2.append(usedstart)
+            
+            print(f"tmp_1: {tmp_1}")
+            print(f"tmp_2: {tmp_2}")
+
 
             try:
-                
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment, 
-                                                planner.planPath(usedstart,usedgoal,producer[1]), # Aufruf der Methode planPath des Planers
+                                                planner.planPath(tmp_2,tmp_1,producer[1]), # Aufruf der Methode planPath des Planers
                                                 IPPerfMonitor.dataFrame()
                                                 ),
                             )
             except Exception as e:
-            #    throw e
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
                 pass
+            usedstart = pastgoals[i]
+            print(f"New Usedstart: {usedstart}")
+
+
