@@ -187,10 +187,6 @@ class Roundtrip_Path_Planner:
                     print(f"Exception details: {e}")
                     pass
 
-
-
-
-
             except Exception as e:
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
                 print(f"Exception details: {e}")
@@ -198,28 +194,7 @@ class Roundtrip_Path_Planner:
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
-
         print(f"Resultlist: {resultList}")
         print(f"Resultlist: {resultList[0]}")
         print(f"Resultlist: {resultList[1].planner}")
         print(f"Resultlist: {resultList[2].solution}")
-
-
-
-        # # Visualisierung der Ergebnisse
-        # for result in resultList:
-        #     fig_local = plt.figure(figsize=(10,10))
-        #     ax = fig_local.add_subplot(1,1,1)
-        #     title = self.planner + " - " + result.benchmark.name
-        #     if result.solution == []:
-        #         title += " (No path found!)"
-        #     title += "\n Assumed complexity level " + str(result.benchmark.level)
-        #     ax.set_title(title)
-        #     try:
-        #         self.config[result.plannerFactoryName][2](result.planner, result.solution, ax=ax, nodeSize=100)
-
-        #     except Exception as e:
-        #         print ("Error")
-        #         print(f"Exception details: {e}")
-        #         pass
-    
