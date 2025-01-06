@@ -57,7 +57,6 @@ class CollisionChecker(object):
         
         return False
                 
-
 #        for key, value in self.scene.items():
 #            if value.intersects(LineString([(startPos[0], startPos[1]), (endPos[0], endPos[1])])):
  #               return True
@@ -65,7 +64,9 @@ class CollisionChecker(object):
 
     def drawObstacles(self, ax):
         for key, value in self.scene.items():
+            # PolygonPatch ist nicht mit der aktuellen Version von Shapely kompatibel, daher wird die Methode fill verwendet
             # patch = PolygonPatch(value, facecolor="red", alpha=0.8, zorder=2, label=key)
             # ax.add_patch(patch)
+
             x, y = value.exterior.xy
             ax.fill(x, y, facecolor="red", edgecolor="black", alpha=0.8, zorder=2, label=key)

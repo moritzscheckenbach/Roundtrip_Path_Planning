@@ -180,10 +180,14 @@ class Roundtrip_Path_Planner:
                 title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
                 ax.set_title(title)
                 try:
+                    if not resultList[i].solution or len(resultList[i].solution) < 2:
+                        print(f"Invalid solution for planner {key}: {resultList[i].solution}")
+                        continue
+
                     self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
 
                 except Exception as e:
-                    print ("Error")
+                    print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
                     pass
 
@@ -195,6 +199,6 @@ class Roundtrip_Path_Planner:
             print(f"New Usedstart: {usedstart}")
 
         print(f"Resultlist: {resultList}")
-        print(f"Resultlist: {resultList[0]}")
-        print(f"Resultlist: {resultList[1].planner}")
-        print(f"Resultlist: {resultList[2].solution}")
+        print(f"Resultlist[o]: {resultList[0]}")
+        print(f"Resultlist[1].planner: {resultList[1].planner}")
+        print(f"Resultlist[2].solution: {resultList[2].solution}")
