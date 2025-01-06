@@ -55,7 +55,7 @@ class ResultCollection (object):
 ########################
 
 class Roundtrip_Path_Planner:
-    def __init__(self, startpos, targetlist, environment, planner):
+    def __init__(self, startpos, targetlist, environment, plannerName):
         
         #######################
         # Planner Configuration
@@ -115,12 +115,12 @@ class Roundtrip_Path_Planner:
         self.startpos = startpos # start position in configuration space
         self.targetlist = targetlist # list of goal positions in configuration space
         self.environment = environment # reference to Environment
-        self.planner = planner # reference to algorithm
+        self.plannerName = plannerName # reference to algorithm
         self.config = supportedPlanners # dictionary with the needed information about the algorithms configuration options
 
     def plan(self):
         resultList = list()
-        key = self.planner # key enthält den Nemen des Planers
+        key = self.plannerName # key enthält den Nemen des Planers
         producer = self.config[key] # producer enthält alle items der config des Planers
         print(key, producer) # Key ist der Planer, producer ist der Konstruktor (Vorher definierte Configs [siehe oben])
 
@@ -154,9 +154,9 @@ class Roundtrip_Path_Planner:
             print(f"Pastgoals: {pastgoals}")
             print(f"Usedstart: {usedstart}")
             tmp_1 = []
-            tmp_1.append(pastgoals[i])
+            tmp_1.append(usedstart)
             tmp_2 = []
-            tmp_2.append(usedstart)
+            tmp_2.append(pastgoals[i])
             
             print(f"tmp_1: {tmp_1}")
             print(f"tmp_2: {tmp_2}")
@@ -166,7 +166,7 @@ class Roundtrip_Path_Planner:
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment, 
-                                                planner.planPath(tmp_2,tmp_1,producer[1]), # Aufruf der Methode planPath des Planers
+                                                planner.planPath(tmp_1,tmp_2,producer[1]), # Aufruf der Methode planPath des Planers
                                                 IPPerfMonitor.dataFrame()
                                                 ),
                             )
@@ -174,7 +174,7 @@ class Roundtrip_Path_Planner:
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
                 ax = fig_local.add_subplot(1,1,1)
-                title = self.planner + " - " + resultList[i].benchmark.name
+                title = self.plannerName + " - " + resultList[i].benchmark.name
                 if resultList[i].solution == []:
                     title += " (No path found!)"
                 title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
