@@ -150,6 +150,8 @@ class Roundtrip_Path_Planner:
 
         # Pfadplanung für die besuchten Ziele
         usedstart = self.startpos[0]
+        composed_graph = nx.Graph()
+
         for i in range(len(pastgoals)):
             print(f"Pastgoals: {pastgoals}")
             print(f"Usedstart: {usedstart}")
@@ -161,15 +163,13 @@ class Roundtrip_Path_Planner:
             print(f"tmp_1: {tmp_1}")
             print(f"tmp_2: {tmp_2}")
 
-
             try:
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment, 
                                                 planner.planPath(tmp_1,tmp_2,producer[1]), # Aufruf der Methode planPath des Planers
                                                 IPPerfMonitor.dataFrame()
-                                                ),
-                            )
+                                                ))
                 
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
@@ -185,6 +185,9 @@ class Roundtrip_Path_Planner:
                         continue
 
                     self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+                    
+                    # Speichern des Graphen
+                    composed_graph = nx.compose(resultList[i].planner.graph, composed_graph)
 
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
@@ -198,7 +201,23 @@ class Roundtrip_Path_Planner:
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
-        print(f"Resultlist: {resultList}")
-        print(f"Resultlist[o]: {resultList[0]}")
-        print(f"Resultlist[1].planner: {resultList[1].planner}")
-        print(f"Resultlist[2].solution: {resultList[2].solution}")
+        print(f"Resultlist solution: {resultList[0].solution}")
+        print(f"Resultlist solution: {resultList[1].solution}")
+
+        whole_solution = []
+        whole_solution.append(f"-{self.startpos[0][0]}-{self.startpos[0][1]}-")
+        for i in range(len(resultList)):
+            if resultList[i].solution == []:
+                continue
+            whole_solution.extend(resultList[i].solution[1:-1])
+            whole_solution.append(f"-{pastgoals[i][0]}-{pastgoals[i][1]}-")
+
+        print(whole_solution)
+
+        # Visualisierung des gesamten zusammengesetzten Graphen
+        fig_composed = plt.figure(figsize=(10,10))
+        ax_composed = fig_composed.add_subplot(1,1,1)
+        ax_composed.set_title("Composed Graph")
+        pos = {node: (node[0], node[1]) for node in composed_graph.nodes()}
+        nx.draw(composed_graph, pos, ax=ax_composed, with_labels=True, node_size=100, node_color='blue', edge_color='gray')
+        plt.show()
