@@ -214,10 +214,45 @@ class Roundtrip_Path_Planner:
 
         print(whole_solution)
 
-        # Visualisierung des gesamten zusammengesetzten Graphen
-        fig_composed = plt.figure(figsize=(10,10))
-        ax_composed = fig_composed.add_subplot(1,1,1)
-        ax_composed.set_title("Composed Graph")
-        pos = {node: (node[0], node[1]) for node in composed_graph.nodes()}
-        nx.draw(composed_graph, pos, ax=ax_composed, with_labels=True, node_size=100, node_color='blue', edge_color='gray')
+        # # Visualisierung des gesamten zusammengesetzten Graphen
+        # fig_composed = plt.figure(figsize=(10,10))
+        # ax_composed = fig_composed.add_subplot(1,1,1)
+        # ax_composed.set_title("Composed Graph")
+        # pos = {node: (node[0], node[1]) for node in composed_graph.nodes()}
+        # nx.draw(composed_graph, pos, ax=ax_composed, with_labels=True, node_size=100, node_color='blue', edge_color='gray')
+        # plt.show()
+
+        # Visualisierung des gesamten Pfades
+        # Umwandeln der Knoten-Namen in Koordinaten
+        coordinates = []
+        for node in whole_solution:
+            if node.startswith('-') and node.endswith('-'):
+                parts = node.strip('-').split('-')
+                coordinates.append((int(parts[0]), int(parts[1])))
+            else:
+                coordinates.append(node)
+
+        # Visualisierung des Environments
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.set_title("Solution Path with Environment")
+
+        # Zeichnen der Hindernisse im Environment
+        planner._collisionChecker.drawObstacles(ax)
+
+        # Zeichnen des Pfads der Lösung
+        path_x = [coord[0] for coord in coordinates]
+        path_y = [coord[1] for coord in coordinates]
+        ax.plot(path_x, path_y, 'go-', label='Solution Path', zorder=2)  # 'go-' steht für grüne Punkte und Linien
+
+        # Hervorheben des Start- und Zielpunkts
+        ax.plot(coordinates[0][0], coordinates[0][1], 'bo', markersize=10, label='Start', zorder=3)  # 'bo' steht für blauer Punkt
+        ax.plot(coordinates[-1][0], coordinates[-1][1], 'ro', markersize=10, label='Goal', zorder=3)  # 'ro' steht für roter Punkt
+
+        # Setzen der Achsenbeschriftung
+        Env_Limits = planner._collisionChecker.getEnvironmentLimits()
+        x_Limits = Env_Limits[0]
+        y_Limits = Env_Limits[1]
+        ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
+        ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
+        ax.legend()
         plt.show()
