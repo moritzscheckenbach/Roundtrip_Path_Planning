@@ -109,25 +109,25 @@ class VisPRM_Customized(PRMBase):
 
         # 3. find connection of start and goal to roadmap
         # find nearest, collision-free connection between node on graph and start
-        posList = nx.get_node_attributes(self.graph,'pos')
-        kdTree = cKDTree(list(posList.values()))
+        posList = nx.get_node_attributes(self.graph,'pos') # get all positions of nodes in graph
+        kdTree = cKDTree(list(posList.values())) # create kdTree for fast nearest neighbor search
         
-        result = kdTree.query(checkedStartList[0],k=5)
-        for node in result[1]:
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-                 self.graph.add_edge("start", list(posList.keys())[node])
+        result = kdTree.query(checkedStartList[0],k=5) # find 5 nearest nodes
+        for node in result[1]: # iterate over nearest nodes
+            if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']): # check if line is in collision
+                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen') # add node to graph
+                 self.graph.add_edge("start", list(posList.keys())[node]) # add edge to graph
                  break
 
-        result = kdTree.query(checkedGoalList[0],k=5)
-        for node in result[1]:
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
-                 self.graph.add_edge("goal", list(posList.keys())[node])
+        result = kdTree.query(checkedGoalList[0],k=5) # find 5 nearest nodes
+        for node in result[1]: # iterate over nearest nodes
+            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']): # check if line is in collision
+                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen') # add node to graph
+                 self.graph.add_edge("goal", list(posList.keys())[node]) # add edge to graph
                  break
 
         try:
-            path = nx.shortest_path(self.graph,"start","goal")
+            path = nx.shortest_path(self.graph,"start","goal") # find shortest path
         except:
             return []
         return path
