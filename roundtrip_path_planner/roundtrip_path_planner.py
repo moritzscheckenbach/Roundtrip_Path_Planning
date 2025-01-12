@@ -212,7 +212,7 @@ class Roundtrip_Path_Planner:
             whole_solution.extend(resultList[i].solution[1:-1])
             whole_solution.append(f"-{pastgoals[i][0]}-{pastgoals[i][1]}-")
 
-        print(whole_solution)
+        print(f"whole solution: {whole_solution}")
 
         # # Visualisierung des gesamten zusammengesetzten Graphen
         # fig_composed = plt.figure(figsize=(10,10))
