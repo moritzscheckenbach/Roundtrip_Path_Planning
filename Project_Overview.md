@@ -24,7 +24,6 @@ Graphische Representation
 
 ### ToDo
 
-1. Graphen in einer Zeichnung
 2. Benchmarks laufen lassen (5)
     - Time
     - Length
@@ -32,3 +31,19 @@ Graphische Representation
     - Obstacle avoidance
 3. visibilityPRM optimieren
 4. Gedanken machen, wie die Pfade optimiert werden könnten
+
+
+### Hinweise Optimierung visibilityPRM
+
+Der Fokus der visibility PRM liegt auf der minimalen Roadmap, nicht auf der Optimierung aller möglichen Kanten.
+Aus diesem Grund kann es vorkommen, dass redundante Connections q zwischen zwei Guards A und B entstehen. Dadurch
+kann ein suboptimaler Pfad, bei minimaler Roadmap entstehen.
+
+Mit einer Sichtbarkeitsprüfung kann festgestellt werden, ob eine Connection q redundant ist oder nicht. Können zwei
+Guards A und B direkt miteinander verbunden werden, ist q redundant und könnte entfernt werden. Dadurch wird der Pfad kürzer und die Roadmap enthält insgesamt weniger Punkte.
+
+Eine erneute Kollisionsprüfung ist ratsam und wird zulasten der Effizienz gehen.
+
+
+Ziele einer Optimierung könnten sein:
+- Redundanzprüfung und anschließende Minimalisierung der Roadmap
