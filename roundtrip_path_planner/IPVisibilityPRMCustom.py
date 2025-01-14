@@ -16,7 +16,7 @@ from IPPerfMonitor import IPPerfMonitor
 
 class VisibilityStatsHandler():
     
-    def __init__(self): # Neuer Graph
+    def __init__(self): # Neuer Graph #
         self.graph = nx.Graph() 
         
     def addNodeAtPos(self,nodeNumber,pos): # Nodes Hinzufügen
