@@ -47,3 +47,20 @@ Eine erneute Kollisionsprüfung ist ratsam und wird zulasten der Effizienz gehen
 
 Ziele einer Optimierung könnten sein:
 - Redundanzprüfung und anschließende Minimalisierung der Roadmap
+
+
+
+
+Optimierungsvorschläge
+
+- unnötige punkte nicht generieren lassen, sondern direkt bei maperstellung nach möglichen Pfaden suchen
+    - Pfad ist evtl. nicht optimal, aber der erste geschlossene pfad wird sofort gewählt (evtl. schneller)
+    - Idee early stopping (Rechenzeit sinkt)
+
+    - evtl. ein Problem: Viele Connection (unnötig) werden erzeugt, bis alle Guards erzeugt sind, die benötigt werden
+
+- Start und Goal als erstes als Guard setzten (prüfen ob direkte Verbindung möglich, dann abbruch mit Lösungspfad), ansonsten weiter wie Algorithmus es vorsieht. (Weitere verkürzung des Pfades) - Effizienzsteigerung, da gezielt
+Punkte in den Graphen hinzugefügt werden, die eine sinnvolle Position haben. Nicht angewiesen auf random Positionen
+
+- Gewichteten Graphen einführen, um shortest_path die Möglichkeit zu geben tatsächlich den kürzesten Pfad zu ermitteln
+    - evtl. Problem: shortest Path Berechnungsaufwand steigt stark an. Rechenzeit steigt.
