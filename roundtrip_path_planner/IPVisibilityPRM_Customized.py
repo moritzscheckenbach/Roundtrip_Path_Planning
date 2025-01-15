@@ -112,7 +112,8 @@ class VisPRM_Custom(PRMBase):
             self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
             self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
             self.graph.add_edge("start", "goal")
-            return ["start", "goal"]
+            formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in ["start", "goal"]]
+            return formatted_path
         else:
             self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
             self.graph.add_node("goal", pos=checkedGoalList[0], color='red', nodeType = 'Guard')
@@ -121,6 +122,7 @@ class VisPRM_Custom(PRMBase):
 
             try:
                 path = nx.shortest_path(self.graph,"start","goal")
+                formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]
             except:
                 return []
-            return path
+            return formatted_path

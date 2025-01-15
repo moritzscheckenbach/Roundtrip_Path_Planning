@@ -31,6 +31,7 @@ import IPVisibilityPRM_Customized
 import IPVISBasicPRM
 import IPVISLazyPRM
 import IPVISVisibilityPRM
+import IPVISVisibilityPRM_Customized
 import IPVISAStar
 import IPVISRRT
 
@@ -88,7 +89,7 @@ class Roundtrip_Path_Planner:
 
         visbility_custom_Config = dict()
         visbilityConfig["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM.visibilityPRMVisualize ]
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize ]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -176,28 +177,34 @@ class Roundtrip_Path_Planner:
                                                 IPPerfMonitor.dataFrame()
                                                 ))
                 
-                # Visualisierung der Ergebnisse
-                fig_local = plt.figure(figsize=(10,10))
-                ax = fig_local.add_subplot(1,1,1)
-                title = self.plannerName + " - " + resultList[i].benchmark.name
-                if resultList[i].solution == []:
-                    title += " (No path found!)"
-                title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
-                ax.set_title(title)
                 try:
-                    if not resultList[i].solution or len(resultList[i].solution) < 2:
-                        print(f"Invalid solution for planner {key}: {resultList[i].solution}")
-                        continue
+                    # Visualisierung der Ergebnisse
+                    fig_local = plt.figure(figsize=(10,10))
+                    ax = fig_local.add_subplot(1,1,1)
+                    print("T1")
+                    title = f"{self.plannerName} - {resultList[i].benchmark.name}"
+                    print("T2")
+                    if resultList[i].solution == []:
+                        title += " (No path found!)"
+                    title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
+                    ax.set_title(title)
+                    try:
+                        if not resultList[i].solution or len(resultList[i].solution) < 2:
+                            print(f"Invalid solution for planner {key}: {resultList[i].solution}")
+                            continue
 
-                    self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
-                    
-                    # Speichern des Graphen
-                    composed_graph = nx.compose(resultList[i].planner.graph, composed_graph)
-
+                        self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+                        
+                        # Speichern des Graphen
+                        composed_graph = nx.compose(resultList[i].planner.graph, composed_graph)
+                    except:
+                        print(f"Aktuell keine Visualisierung möglich")
+                        pass
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
                     pass
+
 
             except Exception as e:
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
@@ -234,6 +241,10 @@ class Roundtrip_Path_Planner:
             if node.startswith('-') and node.endswith('-'):
                 parts = node.strip('-').split('-')
                 coordinates.append((int(parts[0]), int(parts[1])))
+            # elif node == "start":
+            #     coordinates.append(self.startpos[0])
+            # elif node == "goal":
+            #     coordinates.append(self.targetlist[-1])
             else:
                 coordinates.append(node)
 
