@@ -138,10 +138,25 @@ class VisPRM_Custom(PRMBase):
             plt.show()
 
             self._learnRoadmap(config["ntry"])
+
+            import matplotlib.pyplot as plt
+
+            pos = nx.get_node_attributes(self.graph, 'pos')
+            colors = nx.get_node_attributes(self.graph, 'color').values()
+            nx.draw(self.graph, pos, node_color=colors, with_labels=True, node_size=500, font_size=10)
+
+            # Draw obstacles
+            if hasattr(self._collisionChecker, 'drawObstacles'):
+                self._collisionChecker.drawObstacles(plt)
+
+            plt.show()
+
+
             print("Test_11")
             try:
                 path = nx.shortest_path(self.graph,"start","goal")
                 #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]
             except:
                 return []
+            print(f"Solution_Visibility ist {path}")
             return path

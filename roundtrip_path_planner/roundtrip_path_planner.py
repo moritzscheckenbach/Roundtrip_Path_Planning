@@ -189,8 +189,9 @@ class Roundtrip_Path_Planner:
                 ax.set_title(title)
 
                 try:
+                    print("hallo")
                     self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
-                
+                    print("welt")
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
@@ -200,7 +201,7 @@ class Roundtrip_Path_Planner:
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
                 print(f"Exception details: {e}")
                 pass
-            
+
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
