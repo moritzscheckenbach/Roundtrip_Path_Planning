@@ -103,7 +103,6 @@ class VisPRM(PRMBase):
         
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
-        
         # 2. learn Roadmap
         self._learnRoadmap(config["ntry"])
 
@@ -128,6 +127,7 @@ class VisPRM(PRMBase):
 
         try:
             path = nx.shortest_path(self.graph,"start","goal")
+            print(path)
         except:
             return []
         return path

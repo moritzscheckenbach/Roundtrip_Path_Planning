@@ -85,11 +85,11 @@ class Roundtrip_Path_Planner:
 
         visbilityConfig = dict()
         visbilityConfig["ntry"] = 300
-        supportedPlanners["visibilityPRM"] = [IPVisibilityPRM.VisPRM, visbilityConfig, IPVISVisibilityPRM.visibilityPRMVisualize ]
+        supportedPlanners["visibilityPRM"] = [IPVisibilityPRM.VisPRM, visbilityConfig, IPVISVisibilityPRM.visibilityPRMVisualize]
 
         visbility_custom_Config = dict()
-        visbilityConfig["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize ]
+        visbility_custom_Config["ntry"] = 300
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM.visibilityPRMVisualize]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -176,40 +176,31 @@ class Roundtrip_Path_Planner:
                                                 planner.planPath(tmp_1,tmp_2,producer[1]), # Aufruf der Methode planPath des Planers
                                                 IPPerfMonitor.dataFrame()
                                                 ))
-                
-                try:
-                    # Visualisierung der Ergebnisse
-                    fig_local = plt.figure(figsize=(10,10))
-                    ax = fig_local.add_subplot(1,1,1)
-                    print("T1")
-                    title = f"{self.plannerName} - {resultList[i].benchmark.name}"
-                    print("T2")
-                    if resultList[i].solution == []:
-                        title += " (No path found!)"
-                    title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
-                    ax.set_title(title)
-                    try:
-                        if not resultList[i].solution or len(resultList[i].solution) < 2:
-                            print(f"Invalid solution for planner {key}: {resultList[i].solution}")
-                            continue
+                                
+                # Visualisierung der Ergebnisse
+                fig_local = plt.figure(figsize=(10,10))
+                ax = fig_local.add_subplot(1,1,1)
+                print("T1")
+                title = f"{self.plannerName} - {resultList[i].benchmark.name}"
+                print("T2")
+                if resultList[i].solution == []:
+                    title += " (No path found!)"
+                title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
+                ax.set_title(title)
 
-                        self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
-                        
-                        # Speichern des Graphen
-                        composed_graph = nx.compose(resultList[i].planner.graph, composed_graph)
-                    except:
-                        print(f"Aktuell keine Visualisierung möglich")
-                        pass
+                try:
+                    self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+                
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
                     pass
 
-
             except Exception as e:
                 print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
                 print(f"Exception details: {e}")
                 pass
+            
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
@@ -225,14 +216,6 @@ class Roundtrip_Path_Planner:
             whole_solution.append(f"-{pastgoals[i][0]}-{pastgoals[i][1]}-")
 
         print(f"whole solution: {whole_solution}")
-
-        # # Visualisierung des gesamten zusammengesetzten Graphen
-        # fig_composed = plt.figure(figsize=(10,10))
-        # ax_composed = fig_composed.add_subplot(1,1,1)
-        # ax_composed.set_title("Composed Graph")
-        # pos = {node: (node[0], node[1]) for node in composed_graph.nodes()}
-        # nx.draw(composed_graph, pos, ax=ax_composed, with_labels=True, node_size=100, node_color='blue', edge_color='gray')
-        # plt.show()
 
         # Visualisierung des gesamten Pfades
         # Umwandeln der Knoten-Namen in Koordinaten
@@ -271,4 +254,5 @@ class Roundtrip_Path_Planner:
         ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
         ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
         ax.legend()
+        ax.grid(True)
         plt.show()
