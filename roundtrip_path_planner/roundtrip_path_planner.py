@@ -26,6 +26,7 @@ import IPLazyPRM
 import IPPRMBase
 import IPRRT
 import IPVisibilityPRM
+import IPVisibilityPRM_Customized
 
 import IPVISBasicPRM
 import IPVISLazyPRM
@@ -84,6 +85,10 @@ class Roundtrip_Path_Planner:
         visbilityConfig = dict()
         visbilityConfig["ntry"] = 300
         supportedPlanners["visibilityPRM"] = [IPVisibilityPRM.VisPRM, visbilityConfig, IPVISVisibilityPRM.visibilityPRMVisualize ]
+
+        visbility_custom_Config = dict()
+        visbilityConfig["ntry"] = 300
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM.visibilityPRMVisualize ]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -153,8 +158,8 @@ class Roundtrip_Path_Planner:
         composed_graph = nx.Graph()
 
         for i in range(len(pastgoals)):
-            print(f"Pastgoals: {pastgoals}")
             print(f"Usedstart: {usedstart}")
+            print(f"Pastgoals: {pastgoals}")
             tmp_1 = []
             tmp_1.append(usedstart)
             tmp_2 = []

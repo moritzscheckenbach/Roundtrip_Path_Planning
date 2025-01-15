@@ -61,6 +61,7 @@ Optimierungsvorschläge
 
 - Start und Goal als erstes als Guard setzten (prüfen ob direkte Verbindung möglich, dann abbruch mit Lösungspfad), ansonsten weiter wie Algorithmus es vorsieht. (Weitere verkürzung des Pfades) - Effizienzsteigerung, da gezielt
 Punkte in den Graphen hinzugefügt werden, die eine sinnvolle Position haben. Nicht angewiesen auf random Positionen
+    - Hinweis: Sollte dieser Ansatz gewählt werden, muss ggf. die Visualisierung geändert werden,
 
 - Gewichteten Graphen einführen, um shortest_path die Möglichkeit zu geben tatsächlich den kürzesten Pfad zu ermitteln
     - evtl. Problem: shortest Path Berechnungsaufwand steigt stark an. Rechenzeit steigt.

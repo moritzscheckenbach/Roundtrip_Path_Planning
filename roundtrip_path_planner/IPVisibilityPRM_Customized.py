@@ -24,11 +24,11 @@ class VisibilityStatsHandler():
         self.graph.add_edge(fr, to)
         return
         
-class VisPRM_Customized(PRMBase):
+class VisPRM_Custom(PRMBase):
     """Class implements an simplified version of a visibility PRM"""
 
     def __init__(self, _collChecker, _statsHandler = None):
-        super(VisPRM_Customized, self).__init__(_collChecker)
+        super(VisPRM_Custom, self).__init__(_collChecker)
         self.graph = nx.Graph()
         self.statsHandler = VisibilityStatsHandler() # not yet fully customizable (s. parameters of constructors)
                 
@@ -76,7 +76,7 @@ class VisPRM_Customized(PRMBase):
                     break;                    
 
             if (merged==False) and (g_vis == None):
-                self.graph.add_node(nodeNumber, pos = q_pos, color='red', nodeType = 'Guard')
+                self.graph.add_node(nodeNumber, pos = q_pos, color='red', nodeType = 'Guard') # Add the first guard -> Obsolete when Start and Goal are added as guards in the beginning
                 #print "ADDED Guard ", nodeNumber
                 currTry = 0
             else:
@@ -104,31 +104,23 @@ class VisPRM_Customized(PRMBase):
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
         
-        # 2. learn Roadmap
-        self._learnRoadmap(config["ntry"])
+        # 2. Check if start and goal can see each other
+        self.statsHandler.addNodeAtPos(0, checkedStartList[0])
+        self.statsHandler.addNodeAtPos(1, checkedGoalList[0])
+        self.statsHandler.addVisTest(0, 1)
+        if self._isVisible(checkedStartList[0], checkedGoalList[0]):
+            self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+            self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
+            self.graph.add_edge("start", "goal")
+            return ["start", "goal"]
+        else:
+            self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
+            self.graph.add_node("goal", pos=checkedGoalList[0], color='red', nodeType = 'Guard')
 
-        # 3. find connection of start and goal to roadmap
-        # find nearest, collision-free connection between node on graph and start
-        posList = nx.get_node_attributes(self.graph,'pos') # get all positions of nodes in graph
-        kdTree = cKDTree(list(posList.values())) # create kdTree for fast nearest neighbor search
-        
-        result = kdTree.query(checkedStartList[0],k=5) # find 5 nearest nodes
-        for node in result[1]: # iterate over nearest nodes
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']): # check if line is in collision
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen') # add node to graph
-                 self.graph.add_edge("start", list(posList.keys())[node]) # add edge to graph
-                 break
+            self._learnRoadmap(config["ntry"])
 
-        result = kdTree.query(checkedGoalList[0],k=5) # find 5 nearest nodes
-        for node in result[1]: # iterate over nearest nodes
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']): # check if line is in collision
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen') # add node to graph
-                 self.graph.add_edge("goal", list(posList.keys())[node]) # add edge to graph
-                 break
-
-        try:
-            path = nx.shortest_path(self.graph,"start","goal") # find shortest path
-        except:
-            return []
-        return path
-        
+            try:
+                path = nx.shortest_path(self.graph,"start","goal")
+            except:
+                return []
+            return path
