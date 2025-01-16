@@ -4,6 +4,8 @@
 This code is part of the course "Introduction to robot path planning" (Author: Bjoern Hein).
 
 License is based on Creative Commons: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) (pls. check: http://creativecommons.org/licenses/by-nc/4.0/)
+
+Modifierd Version for the exam roundtrip path planner winter semester 2024/2025 by Janik Marten, Moritz Schankenbach & Wesley Glauben
 """
 
 from IPPRMBase import PRMBase
@@ -13,31 +15,34 @@ from IPPerfMonitor import IPPerfMonitor
 
 class VisibilityStatsHandler():
     
-    def __init__(self):
+    def __init__(self): # initialize the graph
         self.graph = nx.Graph()
         
-    def addNodeAtPos(self,nodeNumber,pos):
+    def addNodeAtPos(self,nodeNumber,pos): # add a node to the graph
         self.graph.add_node(nodeNumber, pos=pos, color='yellow')
         return
     
-    def addVisTest(self,fr,to):
+    def addVisTest(self,fr,to): # check for visibility between two nodes
         self.graph.add_edge(fr, to)
         return
         
 class VisPRM_Custom(PRMBase):
-    """Class implements an simplified version of a visibility PRM"""
+    """Class implements an optimized version of a visibility PRM"""
 
-    def __init__(self, _collChecker, _statsHandler = None):
+    def __init__(self, _collChecker, _statsHandler = None): # create a new instance of the class
         super(VisPRM_Custom, self).__init__(_collChecker)
         self.graph = nx.Graph()
         self.statsHandler = VisibilityStatsHandler() # not yet fully customizable (s. parameters of constructors)
                 
-    def _isVisible(self, pos, guardPos):
+    def _isVisible(self, pos, guardPos): # The _isVisible method checks if a line between two positions is free of collisions using a collision checker.
         return not self._collisionChecker.lineInCollision(pos, guardPos)
 
     @IPPerfMonitor
-    def _learnRoadmap(self, ntry):
-
+    def _learnRoadmap(self, ntry): # Learn the roadmap by adding nodes to the graph and checking for visibility
+        """
+        Args:
+            ntry (int): number of tries to add a new node to the roadmap
+        """
         nodeNumber = 2
         currTry = 0
         while currTry < ntry:
@@ -51,10 +56,10 @@ class VisPRM_Custom(PRMBase):
         
             # every connected component represents one guard
             merged = False
-            for comp in nx.connected_components(self.graph): # Impliciteley represents G_vis
-                found = False
-                merged = False
-                for g in comp: # connected components consists of guards and connection: only test nodes of type 'Guards'
+            for component in nx.connected_components(self.graph): # Impliciteley represents G_vis
+                found = False # if new point is seen by one guard, found will be set true
+                merged = False # if new point is seen by two guards, merged will be set true
+                for g in component: # connected components consists of guards and connection: only test nodes of type 'Guards'
                     if self.graph.nodes()[g]['nodeType'] == 'Guard':
                         if self.statsHandler:
                             self.statsHandler.addVisTest(nodeNumber, g)
@@ -64,8 +69,10 @@ class VisPRM_Custom(PRMBase):
                                 g_vis = g
                             else:
                                 self.graph.add_node(nodeNumber, pos = q_pos, color='lightblue', nodeType = 'Connection')
-                                self.graph.add_edge(nodeNumber, g)
-                                self.graph.add_edge(nodeNumber, g_vis)
+                                dist = self._distance(q_pos, self.graph.nodes()[g_vis]['pos']) # Calculate the distance between the new node and the guard
+                                self.graph.add_edge(nodeNumber, g, dist = dist)
+                                dist = self._distance(q_pos, self.graph.nodes()[g]['pos']) # Calculate the distance between the new node and the guard
+                                self.graph.add_edge(nodeNumber, g_vis, dist = dist)
                                 #print "ADDED Connection node", nodeNumber
                                 merged = True
                         # break, if node was visible,because visibility from one node of the guard is sufficient...
@@ -115,6 +122,7 @@ class VisPRM_Custom(PRMBase):
             self.graph.add_edge("start", "goal")
             path = nx.shortest_path(self.graph,"start","goal")
             #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in ["start", "goal"]]
+            print(f"Path directly connectable. Solution_Visibility ist {path}")
             return path
         else:
             self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
