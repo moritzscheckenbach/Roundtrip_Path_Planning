@@ -29,7 +29,7 @@ Graphische Representation
     - Length
     - Smoothness
     - Obstacle avoidance
-3. visibilityPRM optimieren
+3. Visualisierung optimieren
 4. Gedanken machen, wie die Pfade optimiert werden könnten
 
 
