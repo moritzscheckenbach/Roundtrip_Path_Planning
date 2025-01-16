@@ -65,8 +65,8 @@ class VisPRMCustom(PRMBase):
                 merged = False
                 for g in component: # connected components consists of guards and connection: only test nodes of type 'Guards'
                     if self.graph.nodes()[g]['nodeType'] == 'Guard':
-                        if self.statsHandler:
-                            self.statsHandler.addVisTest(nodeNumber, g)
+                        # if self.statsHandler and g != 'goal' and g != 'start':
+                        #     #self.statsHandler.addVisTest(nodeNumber, g)
                         if self._isVisible(q_pos,self.graph.nodes()[g]['pos']):
                             found = True
                             if g_vis == None:

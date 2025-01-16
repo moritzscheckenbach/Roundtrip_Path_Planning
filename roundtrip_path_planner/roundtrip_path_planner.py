@@ -89,7 +89,7 @@ class Roundtrip_Path_Planner:
 
         visbility_custom_Config = dict()
         visbility_custom_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM.visibilityPRMVisualize]
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -180,18 +180,24 @@ class Roundtrip_Path_Planner:
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
                 ax = fig_local.add_subplot(1,1,1)
-                print("T1")
                 title = f"{self.plannerName} - {resultList[i].benchmark.name}"
-                print("T2")
                 if resultList[i].solution == []:
                     title += " (No path found!)"
                 title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
                 ax.set_title(title)
+                Env_Limits = planner._collisionChecker.getEnvironmentLimits()
+                x_Limits = Env_Limits[0]
+                y_Limits = Env_Limits[1]
+                ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
+                ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
+                ax.set_xlim(0, 22)
+                ax.set_ylim(0, 22)
+                ax.set_xlabel('X-Achse')
+                ax.set_ylabel('Y-Achse')
+                ax.grid(True)
 
                 try:
-                    print("hallo")
                     self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
-                    print("welt")
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
@@ -208,52 +214,52 @@ class Roundtrip_Path_Planner:
         print(f"Resultlist solution: {resultList[0].solution}")
         print(f"Resultlist solution: {resultList[1].solution}")
 
-        whole_solution = []
-        whole_solution.append(f"-{self.startpos[0][0]}-{self.startpos[0][1]}-")
-        for i in range(len(resultList)):
-            if resultList[i].solution == []:
-                continue
-            whole_solution.extend(resultList[i].solution[1:-1])
-            whole_solution.append(f"-{pastgoals[i][0]}-{pastgoals[i][1]}-")
+        # whole_solution = []
+        # whole_solution.append(f"-{self.startpos[0][0]}-{self.startpos[0][1]}-")
+        # for i in range(len(resultList)):
+        #     if resultList[i].solution == []:
+        #         continue
+        #     whole_solution.extend(resultList[i].solution[1:-1])
+        #     whole_solution.append(f"-{pastgoals[i][0]}-{pastgoals[i][1]}-")
 
-        print(f"whole solution: {whole_solution}")
+        # print(f"whole solution: {whole_solution}")
 
-        # Visualisierung des gesamten Pfades
-        # Umwandeln der Knoten-Namen in Koordinaten
-        coordinates = []
-        for node in whole_solution:
-            if node.startswith('-') and node.endswith('-'):
-                parts = node.strip('-').split('-')
-                coordinates.append((int(parts[0]), int(parts[1])))
-            # elif node == "start":
-            #     coordinates.append(self.startpos[0])
-            # elif node == "goal":
-            #     coordinates.append(self.targetlist[-1])
-            else:
-                coordinates.append(node)
+        # # Visualisierung des gesamten Pfades
+        # # Umwandeln der Knoten-Namen in Koordinaten
+        # coordinates = []
+        # for node in whole_solution:
+        #     if node.startswith('-') and node.endswith('-'):
+        #         parts = node.strip('-').split('-')
+        #         coordinates.append((int(parts[0]), int(parts[1])))
+        #     # elif node == "start":
+        #     #     coordinates.append(self.startpos[0])
+        #     # elif node == "goal":
+        #     #     coordinates.append(self.targetlist[-1])
+        #     else:
+        #         coordinates.append(node)
 
-        # Visualisierung des Environments
-        fig, ax = plt.subplots(figsize=(10, 10))
-        ax.set_title("Solution Path with Environment")
+        # # Visualisierung des Environments
+        # fig, ax = plt.subplots(figsize=(10, 10))
+        # ax.set_title("Solution Path with Environment")
 
-        # Zeichnen der Hindernisse im Environment
-        planner._collisionChecker.drawObstacles(ax)
+        # # Zeichnen der Hindernisse im Environment
+        # planner._collisionChecker.drawObstacles(ax)
 
-        # Zeichnen des Pfads der Lösung
-        path_x = [coord[0] for coord in coordinates]
-        path_y = [coord[1] for coord in coordinates]
-        ax.plot(path_x, path_y, 'go-', label='Solution Path', zorder=2)  # 'go-' steht für grüne Punkte und Linien
+        # # Zeichnen des Pfads der Lösung
+        # path_x = [coord[0] for coord in coordinates]
+        # path_y = [coord[1] for coord in coordinates]
+        # ax.plot(path_x, path_y, 'go-', label='Solution Path', zorder=2)  # 'go-' steht für grüne Punkte und Linien
 
-        # Hervorheben des Start- und Zielpunkts
-        ax.plot(coordinates[0][0], coordinates[0][1], 'bo', markersize=10, label='Start', zorder=3)  # 'bo' steht für blauer Punkt
-        ax.plot(coordinates[-1][0], coordinates[-1][1], 'ro', markersize=10, label='Goal', zorder=3)  # 'ro' steht für roter Punkt
+        # # Hervorheben des Start- und Zielpunkts
+        # ax.plot(coordinates[0][0], coordinates[0][1], 'bo', markersize=10, label='Start', zorder=3)  # 'bo' steht für blauer Punkt
+        # ax.plot(coordinates[-1][0], coordinates[-1][1], 'ro', markersize=10, label='Goal', zorder=3)  # 'ro' steht für roter Punkt
 
-        # Setzen der Achsenbeschriftung
-        Env_Limits = planner._collisionChecker.getEnvironmentLimits()
-        x_Limits = Env_Limits[0]
-        y_Limits = Env_Limits[1]
-        ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
-        ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
-        ax.legend()
-        ax.grid(True)
-        plt.show()
+        # # Setzen der Achsenbeschriftung
+        # Env_Limits = planner._collisionChecker.getEnvironmentLimits()
+        # x_Limits = Env_Limits[0]
+        # y_Limits = Env_Limits[1]
+        # ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
+        # ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
+        # ax.legend()
+        # ax.grid(True)
+        # plt.show()

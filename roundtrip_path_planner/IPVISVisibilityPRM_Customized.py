@@ -8,7 +8,7 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 
 import networkx as nx
 
-def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
+def visibilityPRM_custom_Visualize(planner, solution, ax = None, nodeSize = 300):
     # get a list of positions of all nodes by returning the content of the attribute 'pos'
     graph = planner.graph
     statsHandler = planner.statsHandler
@@ -16,9 +16,16 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
     pos = nx.get_node_attributes(graph,'pos')
     color = nx.get_node_attributes(graph,'color')
     
+    if 'start' in statsHandler.graph:
+        statsHandler.graph.remove_node('start')
+    if 'goal' in statsHandler.graph:
+        statsHandler.graph.remove_node('goal')
+
     if statsHandler:
-        statPos = nx.get_node_attributes(statsHandler.graph,'pos')
-        nx.draw(statsHandler.graph, pos=statPos, alpha=0.2,edge_color='y',node_size=nodeSize)
+         statPos = nx.get_node_attributes(statsHandler.graph,'pos')
+         print(f"StatsHandler: {statPos}")
+         nx.draw(statsHandler.graph, pos=statPos, alpha=0.2,edge_color='y',node_size=nodeSize)
+         print(f"Nodes im StatsHandler Graph {list(statsHandler.graph.nodes)}")
         
     # draw graph (nodes colorized by degree)
     nx.draw(graph, pos = pos, nodelist=color.keys(), node_color = color.values(), ax=ax)   
@@ -33,19 +40,3 @@ def visibilityPRMVisualize(planner, solution, ax = None, nodeSize = 300):
 
     # draw edges based on solution path
     nx.draw_networkx_edges(Gsp,pos,alpha=0.8,edge_color='g',width=10, label="Solution Path",ax=ax)
-        
-    # draw start and goal
-    # draw start and goal
-    # if "start" in graph.nodes(): 
-    #     nx.draw_networkx_nodes(graph,pos,nodelist=["start"],
-    #                                node_size=nodeSize,
-    #                                node_color='#00dd00',  ax = ax)
-    #     nx.draw_networkx_labels(graph,pos,labels={"start": "S"},  ax = ax)
-
-
-    # if "goal" in graph.nodes():
-    #     nx.draw_networkx_nodes(graph,pos,nodelist=["goal"],
-    #                                node_size=nodeSize,
-    #                                node_color='#DD0000',  ax = ax)
-    #     nx.draw_networkx_labels(graph,pos,labels={"goal": "G"},  ax = ax)
-

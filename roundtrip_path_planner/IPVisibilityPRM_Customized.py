@@ -98,61 +98,30 @@ class VisPRM_Custom(PRMBase):
             config["ntry"] = 40 
         
         """
-        print("Test_1")
         # 0. reset
         self.graph.clear()
+        self.statsHandler.graph.clear()
         
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
         
-        print("Test_2")
         # 2. Check if start and goal can see each other
         self.statsHandler.addNodeAtPos(0, checkedStartList[0])
         self.statsHandler.addNodeAtPos(1, checkedGoalList[0])
-        self.statsHandler.addVisTest(0, 1)
-        print("Test_3")
+        # self.statsHandler.addVisTest(0, 1)
         if self._isVisible(checkedStartList[0], checkedGoalList[0]):
-            print("Test_4")
             self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-            print("Test_5")
             self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
-            print("Test_6")
             self.graph.add_edge("start", "goal")
-            print("Test_7")
             path = nx.shortest_path(self.graph,"start","goal")
-            print("Test_8")
             #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in ["start", "goal"]]
             return path
         else:
             self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
-            print("Test_9")
             self.graph.add_node("goal", pos=checkedGoalList[0], color='red', nodeType = 'Guard')
-            print("Test_10")
-
-
-            import matplotlib.pyplot as plt
-
-            pos = nx.get_node_attributes(self.graph, 'pos')
-            colors = nx.get_node_attributes(self.graph, 'color').values()
-            nx.draw(self.graph, pos, node_color=colors, with_labels=True, node_size=500, font_size=10)
-            plt.show()
 
             self._learnRoadmap(config["ntry"])
 
-            import matplotlib.pyplot as plt
-
-            pos = nx.get_node_attributes(self.graph, 'pos')
-            colors = nx.get_node_attributes(self.graph, 'color').values()
-            nx.draw(self.graph, pos, node_color=colors, with_labels=True, node_size=500, font_size=10)
-
-            # Draw obstacles
-            if hasattr(self._collisionChecker, 'drawObstacles'):
-                self._collisionChecker.drawObstacles(plt)
-
-            plt.show()
-
-
-            print("Test_11")
             try:
                 path = nx.shortest_path(self.graph,"start","goal")
                 #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]

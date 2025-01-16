@@ -53,15 +53,20 @@ Ziele einer Optimierung könnten sein:
 
 Optimierungsvorschläge
 
+TBD
 - unnötige punkte nicht generieren lassen, sondern direkt bei maperstellung nach möglichen Pfaden suchen
     - Pfad ist evtl. nicht optimal, aber der erste geschlossene pfad wird sofort gewählt (evtl. schneller)
     - Idee early stopping (Rechenzeit sinkt)
 
     - evtl. ein Problem: Viele Connection (unnötig) werden erzeugt, bis alle Guards erzeugt sind, die benötigt werden
+    - In der While Schleife (nTrys) alle paar abläufe eine Abfrage ob bereits ein vollständiger Pfad exisitert, erster gefundener Pfad wird nicht optimal sein, aber die nachfolgende Rechenzeit abbrechen
 
+Abgeschlossen
 - Start und Goal als erstes als Guard setzten (prüfen ob direkte Verbindung möglich, dann abbruch mit Lösungspfad), ansonsten weiter wie Algorithmus es vorsieht. (Weitere verkürzung des Pfades) - Effizienzsteigerung, da gezielt
 Punkte in den Graphen hinzugefügt werden, die eine sinnvolle Position haben. Nicht angewiesen auf random Positionen
     - Hinweis: Sollte dieser Ansatz gewählt werden, muss ggf. die Visualisierung geändert werden,
 
+TBD
 - Gewichteten Graphen einführen, um shortest_path die Möglichkeit zu geben tatsächlich den kürzesten Pfad zu ermitteln
     - evtl. Problem: shortest Path Berechnungsaufwand steigt stark an. Rechenzeit steigt.
+
