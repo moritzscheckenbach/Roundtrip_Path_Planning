@@ -212,7 +212,8 @@ class Roundtrip_Path_Planner:
             print(f"New Usedstart: {usedstart}")
 
         print(f"Resultlist solution: {resultList[0].solution}")
-        print(f"Resultlist solution: {resultList[1].solution}")
+        #print(f"Resultlist solution: {resultList[1].solution}")
+        #print(f"Resultlist solution: {resultList[2].solution}")
 
         # whole_solution = []
         # whole_solution.append(f"-{self.startpos[0][0]}-{self.startpos[0][1]}-")

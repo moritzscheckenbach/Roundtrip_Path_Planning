@@ -76,7 +76,7 @@ class VisPRM_Custom(PRMBase):
                     break;                    
 
             if (merged==False) and (g_vis == None):
-                self.graph.add_node(nodeNumber, pos = q_pos, color='red', nodeType = 'Guard') # Add the first guard -> Obsolete when Start and Goal are added as guards in the beginning
+                self.graph.add_node(nodeNumber, pos = q_pos, color='red', nodeType = 'Guard') # Adding guards
                 #print "ADDED Guard ", nodeNumber
                 currTry = 0
             else:
@@ -126,6 +126,8 @@ class VisPRM_Custom(PRMBase):
                 path = nx.shortest_path(self.graph,"start","goal")
                 #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]
             except:
+                print("No path found")
                 return []
+            print(f"Self.graph ist {self.graph}")
             print(f"Solution_Visibility ist {path}")
             return path

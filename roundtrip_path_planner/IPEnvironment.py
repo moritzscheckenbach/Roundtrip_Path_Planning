@@ -62,11 +62,22 @@ class CollisionChecker(object):
  #               return True
 #        return False
 
+    # def drawObstacles(self, ax):
+    #     for key, value in self.scene.items():
+    #         # PolygonPatch ist nicht mit der aktuellen Version von Shapely kompatibel, daher wird die Methode fill verwendet
+    #         # patch = PolygonPatch(value, facecolor="red", alpha=0.8, zorder=2, label=key)
+    #         # ax.add_patch(patch)
+
+    #         x, y = value.exterior.xy
+    #         ax.fill(x, y, facecolor="red", edgecolor="black", alpha=0.8, zorder=2, label=key)
+
+    #...
     def drawObstacles(self, ax):
         for key, value in self.scene.items():
-            # PolygonPatch ist nicht mit der aktuellen Version von Shapely kompatibel, daher wird die Methode fill verwendet
-            # patch = PolygonPatch(value, facecolor="red", alpha=0.8, zorder=2, label=key)
-            # ax.add_patch(patch)
-
-            x, y = value.exterior.xy
-            ax.fill(x, y, facecolor="red", edgecolor="black", alpha=0.8, zorder=2, label=key)
+            if value.geom_type == 'Polygon':
+                x, y = value.exterior.xy
+                ax.fill(x, y, facecolor="red", edgecolor="black", alpha=0.8, zorder=2, label=key)
+            elif value.geom_type == 'MultiPolygon':
+                for polygon in value:
+                    x, y = polygon.exterior.xy
+                    ax.fill(x, y, facecolor="red", edgecolor="black", alpha=0.8, zorder=2, label=key)
