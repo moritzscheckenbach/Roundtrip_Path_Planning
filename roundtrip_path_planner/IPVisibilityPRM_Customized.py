@@ -128,6 +128,6 @@ class VisPRM_Custom(PRMBase):
             except:
                 print("No path found")
                 return []
-            print(f"Self.graph ist {self.graph}")
-            print(f"Solution_Visibility ist {path}")
+            #print(f"Self.graph ist {self.graph}")
+            #print(f"Solution_Visibility ist {path}")
             return path

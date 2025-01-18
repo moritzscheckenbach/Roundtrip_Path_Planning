@@ -159,15 +159,15 @@ class Roundtrip_Path_Planner:
         composed_graph = nx.Graph()
 
         for i in range(len(pastgoals)):
-            print(f"Usedstart: {usedstart}")
-            print(f"Pastgoals: {pastgoals}")
+            #print(f"Usedstart: {usedstart}")
+            #print(f"Pastgoals: {pastgoals}")
             tmp_1 = []
             tmp_1.append(usedstart)
             tmp_2 = []
             tmp_2.append(pastgoals[i])
             
-            print(f"tmp_1: {tmp_1}")
-            print(f"tmp_2: {tmp_2}")
+            print(f"Startpos: {tmp_1}")
+            print(f"Goalpos: {tmp_2}")
 
             try:
                 resultList.append(ResultCollection(key,
@@ -211,7 +211,7 @@ class Roundtrip_Path_Planner:
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
-        print(f"Resultlist solution: {resultList[0].solution}")
+        #print(f"Resultlist solution: {resultList[0].solution}")
         #print(f"Resultlist solution: {resultList[1].solution}")
         #print(f"Resultlist solution: {resultList[2].solution}")
 
@@ -264,3 +264,5 @@ class Roundtrip_Path_Planner:
         # ax.legend()
         # ax.grid(True)
         # plt.show()
+
+        return resultList
