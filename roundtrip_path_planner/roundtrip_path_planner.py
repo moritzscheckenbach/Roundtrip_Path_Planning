@@ -211,9 +211,6 @@ class Roundtrip_Path_Planner:
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
 
-        #print(f"Resultlist solution: {resultList[0].solution}")
-        #print(f"Resultlist solution: {resultList[1].solution}")
-        #print(f"Resultlist solution: {resultList[2].solution}")
 
         # whole_solution = []
         # whole_solution.append(f"-{self.startpos[0][0]}-{self.startpos[0][1]}-")
@@ -225,8 +222,9 @@ class Roundtrip_Path_Planner:
 
         # print(f"whole solution: {whole_solution}")
 
-        # # Visualisierung des gesamten Pfades
-        # # Umwandeln der Knoten-Namen in Koordinaten
+
+        # Visualisierung des gesamten Pfades
+        # Umwandeln der Knoten-Namen in Koordinaten
         # coordinates = []
         # for node in whole_solution:
         #     if node.startswith('-') and node.endswith('-'):
@@ -239,30 +237,61 @@ class Roundtrip_Path_Planner:
         #     else:
         #         coordinates.append(node)
 
-        # # Visualisierung des Environments
-        # fig, ax = plt.subplots(figsize=(10, 10))
-        # ax.set_title("Solution Path with Environment")
+        
+        visualize = True
+        for result in resultList:
+            if result.solution == []:
+                visualize = False
+            else:
+                continue
+        
+        if visualize == True:
+            # Visualisierung des Environments
+            fig, ax = plt.subplots(figsize=(10, 10))
+            ax.set_title("Solution Path with Environment")
 
-        # # Zeichnen der Hindernisse im Environment
-        # planner._collisionChecker.drawObstacles(ax)
+            # Zeichnen der Hindernisse im Environment
+            planner._collisionChecker.drawObstacles(ax)
 
-        # # Zeichnen des Pfads der Lösung
-        # path_x = [coord[0] for coord in coordinates]
-        # path_y = [coord[1] for coord in coordinates]
-        # ax.plot(path_x, path_y, 'go-', label='Solution Path', zorder=2)  # 'go-' steht für grüne Punkte und Linien
+            # Initialisiere Listen für die Start- und Zielkoordinaten
+            start_coords = None
+            goal_coords = None
 
-        # # Hervorheben des Start- und Zielpunkts
-        # ax.plot(coordinates[0][0], coordinates[0][1], 'bo', markersize=10, label='Start', zorder=3)  # 'bo' steht für blauer Punkt
-        # ax.plot(coordinates[-1][0], coordinates[-1][1], 'ro', markersize=10, label='Goal', zorder=3)  # 'ro' steht für roter Punkt
+            # Iteriere durch die resultList und zeichne jeden Lösungspfad
+            path_x = []
+            path_y = []
 
-        # # Setzen der Achsenbeschriftung
-        # Env_Limits = planner._collisionChecker.getEnvironmentLimits()
-        # x_Limits = Env_Limits[0]
-        # y_Limits = Env_Limits[1]
-        # ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
-        # ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
-        # ax.legend()
-        # ax.grid(True)
-        # plt.show()
+            for idx, result in enumerate(resultList):
+                solution = result.solution  # Beispiel: ['start', 8, 2, 27, 'goal']
+                graph = result.planner.graph
+
+                # Extrahiere die Koordinaten der Nodes aus dem Graphen
+                path_x.extend([graph.nodes[node]['pos'][0] for node in solution])
+                path_y.extend([graph.nodes[node]['pos'][1] for node in solution])
+
+                # Setze die Startkoordinaten, falls noch nicht gesetzt
+                if start_coords is None:
+                    start_coords = (graph.nodes[solution[0]]['pos'][0], graph.nodes[solution[0]]['pos'][1])
+                # Setze die Zielkoordinaten für die letzte Lösung
+                if idx == len(resultList) - 1:
+                    goal_coords = (graph.nodes[solution[-1]]['pos'][0], graph.nodes[solution[-1]]['pos'][1])
+            
+            ax.plot(path_x, path_y, 'go-', label='Solution Path', zorder=2)  # 'go-' steht für grüne Punkte und Linien
+
+            # Hervorheben des Start- und Zielpunkts
+            if start_coords:
+                ax.plot(start_coords[0], start_coords[1], 'bo', markersize=10, label='Start', zorder=3)  # 'bo' steht für blauer Punkt
+            if goal_coords:
+                ax.plot(goal_coords[0], goal_coords[1], 'ro', markersize=10, label='Goal', zorder=3)  # 'ro' steht für roter Punkt
+
+            # Setzen der Achsenbeschriftung
+            Env_Limits = planner._collisionChecker.getEnvironmentLimits()
+            x_Limits = Env_Limits[0]
+            y_Limits = Env_Limits[1]
+            ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
+            ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
+            ax.legend()
+            ax.grid(True)
+            plt.show()
 
         return resultList
