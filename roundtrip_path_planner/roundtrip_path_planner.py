@@ -215,16 +215,14 @@ class Roundtrip_Path_Planner:
         whole_solution = []
         whole_solution.append((self.startpos[0][0], self.startpos[0][1]))
 
-        Vollstaendiger_Pfad = True
+        vollstaendiger_pfad = True
 
         for i in range(len(resultList)):
             if resultList[i].solution == []:
-                Vollstaendiger_Pfad = False
+                vollstaendiger_pfad = False
                 break
 
-        if Vollstaendiger_Pfad == True:
-            print(f"whole solution: {whole_solution}")
-
+        if vollstaendiger_pfad == True:
             # Hole den Graphen und die Lösung
             graph = resultList[i].planner.graph
             solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)

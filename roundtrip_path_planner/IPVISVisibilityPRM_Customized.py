@@ -4,20 +4,11 @@
 This code is part of the course 'Innovative Programmiermethoden für Industrieroboter' (Author: Bjoern Hein). It is based on the slides given during the course, so please **read the information in theses slides first**
 
 License is based on Creative Commons: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) (pls. check: http://creativecommons.org/licenses/by-nc/4.0/)
-
-Modifierd Version for the exam roundtrip path planner winter semester 2024/2025 by Janik Marten, Moritz Schankenbach & Wesley Glauben
 """
 
 import networkx as nx
 
 def visibilityPRM_custom_Visualize(planner, solution, ax = None, nodeSize = 300):
-    """
-    Variables:
-    planner: The planner object
-    solution: The solution path found by the planner
-    ax: 
-    nodeSize: 
-    """
     # get a list of positions of all nodes by returning the content of the attribute 'pos'
     graph = planner.graph
     statsHandler = planner.statsHandler
