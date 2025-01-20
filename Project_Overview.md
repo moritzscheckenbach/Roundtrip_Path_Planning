@@ -24,13 +24,13 @@ Graphische Representation
 
 ### ToDo
 
-2. Benchmarks laufen lassen (5)
+1. Benchmarks laufen lassen (5)
     - Time
     - Length
     - Smoothness
     - Obstacle avoidance
-3. Visualisierung optimieren
-4. Gedanken machen, wie die Pfade optimiert werden könnten
+2. Visualisierung optimieren
+3. Gedanken machen, wie die Pfade optimiert werden könnten
 
 
 ### Hinweise Optimierung visibilityPRM
@@ -51,7 +51,7 @@ Ziele einer Optimierung könnten sein:
 
 
 
-Optimierungsvorschläge
+### Optimierungsvorschläge
 
 TBD
 - unnötige punkte nicht generieren lassen, sondern direkt bei maperstellung nach möglichen Pfaden suchen
@@ -70,3 +70,8 @@ TBD
 - Gewichteten Graphen einführen, um shortest_path die Möglichkeit zu geben tatsächlich den kürzesten Pfad zu ermitteln
     - evtl. Problem: shortest Path Berechnungsaufwand steigt stark an. Rechenzeit steigt.
 
+TBD
+- Verbindung aller Punkte (Guards und Connections) miteinander (wenn sie sich sehen) nach der PRM, um Verbindungen zwischen Connections usw. zu erzeugen -> evtl. bessere Pfade, da mehr wege verfügbar
+
+TBD
+- Mehrere Connections zwischen den selben Guards zulassen, um immer den kürzestmöglichen Pfad zu ermöglichen

@@ -32,9 +32,9 @@ def visibilityPRM_custom_Visualize(planner, solution, ax = None, nodeSize = 300)
 
     if statsHandler:
          statPos = nx.get_node_attributes(statsHandler.graph,'pos')
-         print(f"StatsHandler: {statPos}")
+         #print(f"StatsHandler: {statPos}")
          nx.draw(statsHandler.graph, pos=statPos, alpha=0.2,edge_color='y',node_size=nodeSize)
-         print(f"Nodes im StatsHandler Graph {list(statsHandler.graph.nodes)}")
+         #print(f"Nodes im StatsHandler Graph {list(statsHandler.graph.nodes)}")
         
     # draw graph (nodes colorized by degree)
     nx.draw(graph, pos = pos, nodelist=color.keys(), node_color = color.values(), ax=ax)   
