@@ -31,6 +31,7 @@ Graphische Representation
     - Obstacle avoidance
 2. Visualisierung optimieren
 3. Gedanken machen, wie die Pfade optimiert werden könnten
+4. evtl. Visualisierung anpassen, indem mehrere Planer objekte gespeichert werden (zusätzlicher Vorteil, dass alle PRMs gespeichert werden)
 
 
 ### Hinweise Optimierung visibilityPRM
