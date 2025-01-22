@@ -28,6 +28,7 @@ import IPRRT
 import IPVisibilityPRM
 import IPVisibilityPRM_Customized
 import IPVisibilityPRM_Customized_2
+import IPVisibilityPRM_Customized_3
 
 import IPVISBasicPRM
 import IPVISLazyPRM
@@ -95,6 +96,10 @@ class Roundtrip_Path_Planner:
         visbility_custom_2_Config = dict()
         visbility_custom_2_Config["ntry"] = 300
         supportedPlanners["visibilityPRM_custom_2"] = [IPVisibilityPRM_Customized_2.VisPRM_Custom_2, visbility_custom_2_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
+
+        visbility_custom_3_Config = dict()
+        visbility_custom_3_Config["ntry"] = 300
+        supportedPlanners["visibilityPRM_custom_3"] = [IPVisibilityPRM_Customized_3.VisPRM_Custom_3, visbility_custom_3_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7

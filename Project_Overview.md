@@ -33,9 +33,14 @@ Frage: Warum nutzen wir unsere visibility Roadmap nicht einfach mehrfach? Ist da
 ### ToDo
 
 1. Gedanken machen, wie die Pfade optimiert werden könnten
+    - Start and All Goals as Guard or direct connections between each other
     - Alle Connections verbinden
     - Nur Connections vor dem nächsten Guard oder hinter dem vorherigen Guard auf Sichtbarkeit überprüfen
-2. evtl. Visualisierung anpassen, indem mehrere Planer objekte gespeichert werden (zusätzlicher Vorteil, dass alle PRMs gespeichert werden)
+    - evtl. Parallelisierung der Sichtbarkeitsüberprüfungen, um Rechenzeit zu verringern
+    - dynamische Veränderung der nTrys (Early Stopping)
+2. evtl. Visualisierung anpassen, indem mehrere Planer objekte gespeichert werden (zusätzlicher Vorteil,
+    dass alle PRMs gespeichert werden)
+3. Eine Roadmap für alle multi Query Algorithmen
 
 
 ### Hinweise Optimierung visibilityPRM
