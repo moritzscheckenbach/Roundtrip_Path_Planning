@@ -141,7 +141,7 @@ class VisPRM_Custom_3(PRMBase):
 
             
             # Aufteilen der ntry in kleinere Schritte
-            step_size = 2  # Anzahl der Versuche pro Schritt
+            step_size = 10  # Anzahl der Versuche pro Schritt
             for i in range(0, config["ntry"], step_size):
                 current_iteration = i // step_size + 1
                 self._learnRoadmap(step_size)
