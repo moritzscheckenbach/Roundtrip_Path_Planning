@@ -86,31 +86,31 @@ yoffset=3
 yoffset2=5.5
 xoffsetcircle=5
 #bottom1
-Triangles["obs1"] = LineString([(x, y),           (x+xoffset, y+yoffset), (x+xoffset*2, y)]).buffer(0.4)
-Triangles["obs2"] = LineString([(x+xoffset*2, y), (x+xoffset*3, y+yoffset), (x+xoffset*4, y)]).buffer(0.4)
-Triangles["obs3"] = LineString([(x+xoffset*4, y), (x+xoffset*5, y+yoffset), (x+xoffset*6, y)]).buffer(0.4)
-Triangles["obs4"] = LineString([(x+xoffset*6, y), (x+xoffset*7, y+yoffset), (x+xoffset*8, y)]).buffer(0.4)
+Triangles["obs1"] = LineString([(x, y),           (x+xoffset, y+yoffset), (x+xoffset*2, y)]).buffer(0.07)
+Triangles["obs2"] = LineString([(x+xoffset*2, y), (x+xoffset*3, y+yoffset), (x+xoffset*4, y)]).buffer(0.07)
+Triangles["obs3"] = LineString([(x+xoffset*4, y), (x+xoffset*5, y+yoffset), (x+xoffset*6, y)]).buffer(0.07)
+Triangles["obs4"] = LineString([(x+xoffset*6, y), (x+xoffset*7, y+yoffset), (x+xoffset*8, y)]).buffer(0.07)
 #bottom2
-Triangles["obs5"] = LineString([(x, y+yoffset2),           (x+xoffset, y+yoffset+yoffset2), (x+xoffset*2, y+yoffset2)]).buffer(0.4)
-Triangles["obs6"] = LineString([(x+xoffset*2, y+yoffset2), (x+xoffset*3, y+yoffset+yoffset2), (x+xoffset*4, y+yoffset2)]).buffer(0.4)
-Triangles["obs7"] = LineString([(x+xoffset*4, y+yoffset2), (x+xoffset*5, y+yoffset+yoffset2), (x+xoffset*6, y+yoffset2)]).buffer(0.4)
-Triangles["obs8"] = LineString([(x+xoffset*6, y+yoffset2), (x+xoffset*7, y+yoffset+yoffset2), (x+xoffset*8, y+yoffset2)]).buffer(0.4)
+Triangles["obs5"] = LineString([(x, y+yoffset2),           (x+xoffset, y+yoffset+yoffset2), (x+xoffset*2, y+yoffset2)]).buffer(0.07)
+Triangles["obs6"] = LineString([(x+xoffset*2, y+yoffset2), (x+xoffset*3, y+yoffset+yoffset2), (x+xoffset*4, y+yoffset2)]).buffer(0.07)
+Triangles["obs7"] = LineString([(x+xoffset*4, y+yoffset2), (x+xoffset*5, y+yoffset+yoffset2), (x+xoffset*6, y+yoffset2)]).buffer(0.07)
+Triangles["obs8"] = LineString([(x+xoffset*6, y+yoffset2), (x+xoffset*7, y+yoffset+yoffset2), (x+xoffset*8, y+yoffset2)]).buffer(0.07)
 
-Triangles["obs9"] = LineString([(x, y+yoffset2*2),           (x+xoffset, y+yoffset+yoffset2*2), (x+xoffset*2, y+yoffset2*2)]).buffer(0.4)
-Triangles["obs10"] = LineString([(x+xoffset*2, y+yoffset2*2), (x+xoffset*3, y+yoffset+yoffset2*2), (x+xoffset*4, y+yoffset2*2)]).buffer(0.4)
-Triangles["obs11"] = LineString([(x+xoffset*4, y+yoffset2*2), (x+xoffset*5, y+yoffset+yoffset2*2), (x+xoffset*6, y+yoffset2*2)]).buffer(0.4)
-Triangles["obs12"] = LineString([(x+xoffset*6, y+yoffset2*2), (x+xoffset*7, y+yoffset+yoffset2*2), (x+xoffset*8, y+yoffset2*2)]).buffer(0.4)
+Triangles["obs9"] = LineString([(x, y+yoffset2*2),           (x+xoffset, y+yoffset+yoffset2*2), (x+xoffset*2, y+yoffset2*2)]).buffer(0.07)
+Triangles["obs10"] = LineString([(x+xoffset*2, y+yoffset2*2), (x+xoffset*3, y+yoffset+yoffset2*2), (x+xoffset*4, y+yoffset2*2)]).buffer(0.07)
+Triangles["obs11"] = LineString([(x+xoffset*4, y+yoffset2*2), (x+xoffset*5, y+yoffset+yoffset2*2), (x+xoffset*6, y+yoffset2*2)]).buffer(0.07)
+Triangles["obs12"] = LineString([(x+xoffset*6, y+yoffset2*2), (x+xoffset*7, y+yoffset+yoffset2*2), (x+xoffset*8, y+yoffset2*2)]).buffer(0.07)
 
-Triangles["obs13"] = LineString([(x, y+yoffset2*3),           (x+xoffset, y+yoffset+yoffset2*3), (x+xoffset*2, y+yoffset2*3)]).buffer(0.4)
-Triangles["obs14"] = LineString([(x+xoffset*2, y+yoffset2*3), (x+xoffset*3, y+yoffset+yoffset2*3), (x+xoffset*4, y+yoffset2*3)]).buffer(0.4)
-Triangles["obs15"] = LineString([(x+xoffset*4, y+yoffset2*3), (x+xoffset*5, y+yoffset+yoffset2*3), (x+xoffset*6, y+yoffset2*3)]).buffer(0.4)
-Triangles["obs16"] = LineString([(x+xoffset*6, y+yoffset2*3), (x+xoffset*7, y+yoffset+yoffset2*3), (x+xoffset*8, y+yoffset2*3)]).buffer(0.4)
+Triangles["obs13"] = LineString([(x, y+yoffset2*3),           (x+xoffset, y+yoffset+yoffset2*3), (x+xoffset*2, y+yoffset2*3)]).buffer(0.07)
+Triangles["obs14"] = LineString([(x+xoffset*2, y+yoffset2*3), (x+xoffset*3, y+yoffset+yoffset2*3), (x+xoffset*4, y+yoffset2*3)]).buffer(0.07)
+Triangles["obs15"] = LineString([(x+xoffset*4, y+yoffset2*3), (x+xoffset*5, y+yoffset+yoffset2*3), (x+xoffset*6, y+yoffset2*3)]).buffer(0.07)
+Triangles["obs16"] = LineString([(x+xoffset*6, y+yoffset2*3), (x+xoffset*7, y+yoffset+yoffset2*3), (x+xoffset*8, y+yoffset2*3)]).buffer(0.07)
 
-Triangles["obs17"] = LineString([(x, y+yoffset2*3), (x, y+yoffset2*2)]).buffer(0.4)
-Triangles["obs18"] = LineString([(x, y+yoffset2), (0, y+yoffset2)]).buffer(0.4)
-Triangles["obs19"] = LineString([(x, y+yoffset2), (0, y+yoffset2)]).buffer(0.4)
-Triangles["obs20"] = LineString([(x+xoffset*8, y+yoffset2*0), (x+xoffset*8, y+yoffset2*1)]).buffer(0.4)
-Triangles["obs21"] = LineString([(x+xoffset*8, y+yoffset2*2), (25, y+yoffset2*2)]).buffer(0.4)
+Triangles["obs17"] = LineString([(x, y+yoffset2*3), (x, y+yoffset2*2)]).buffer(0.07)
+Triangles["obs18"] = LineString([(x, y+yoffset2), (0, y+yoffset2)]).buffer(0.07)
+Triangles["obs19"] = LineString([(x, y+yoffset2), (0, y+yoffset2)]).buffer(0.07)
+Triangles["obs20"] = LineString([(x+xoffset*8, y+yoffset2*0), (x+xoffset*8, y+yoffset2*1)]).buffer(0.07)
+Triangles["obs21"] = LineString([(x+xoffset*8, y+yoffset2*2), (25, y+yoffset2*2)]).buffer(0.07)
 description = "Planer has to find a way through all the triangle."
 benchList.append(Benchmark("Triangle fun", CollisionChecker(Triangles), [[18.5,7]], [[3.5,18]], description, 2))
 
