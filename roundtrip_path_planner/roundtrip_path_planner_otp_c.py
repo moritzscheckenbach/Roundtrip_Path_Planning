@@ -26,9 +26,10 @@ import IPLazyPRM
 import IPPRMBase
 import IPRRT
 import IPVisibilityPRM
-import IPVisibilityPRM_Customized
+import IPVisibilityPRM_Customized_1
 import IPVisibilityPRM_Customized_2
 import IPVisibilityPRM_Customized_3
+import IPVisibilityPRM_Customized_4
 
 import IPVISBasicPRM
 import IPVISLazyPRM
@@ -91,7 +92,7 @@ class Roundtrip_Path_Planner:
 
         visbility_custom_Config = dict()
         visbility_custom_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize, False] # True: Multi Query
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized_1.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize, False] # True: Multi Query
 
         visbility_custom_2_Config = dict()
         visbility_custom_2_Config["ntry"] = 300
@@ -100,6 +101,10 @@ class Roundtrip_Path_Planner:
         visbility_custom_3_Config = dict()
         visbility_custom_3_Config["ntry"] = 300
         supportedPlanners["visibilityPRM_custom_3"] = [IPVisibilityPRM_Customized_3.VisPRM_Custom_3, visbility_custom_3_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize, False] # True: Multi Query
+
+        visbility_custom_4_Config = dict()
+        visbility_custom_4_Config["ntry"] = 300
+        supportedPlanners["visibilityPRM_custom_4"] = [IPVisibilityPRM_Customized_4.VisPRM_Custom_4, visbility_custom_4_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize, True] # True: Multi Query
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -236,12 +241,6 @@ class Roundtrip_Path_Planner:
                         print (f"Visualizing error for planner {key}: {e}")
                         print(f"Exception details: {e}")
                         pass
-
-                except Exception as e:
-                    print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
-                    print(f"Exception details: {e}")
-                    pass
-
                     
                 except Exception as e:
                     print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nSingle Query")
@@ -258,16 +257,14 @@ class Roundtrip_Path_Planner:
                     title += " (No path found!)"
                 title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
                 ax.set_title(title)
-                Env_Limits = planner._collisionChecker.getEnvironmentLimits()
-                x_Limits = Env_Limits[0]
-                y_Limits = Env_Limits[1]
-                ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
-                ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
-                ax.set_xlim(0, 22)
-                ax.set_ylim(0, 22)
-                ax.set_xlabel('X-Achse')
-                ax.set_ylabel('Y-Achse')
-                ax.grid(True)
+                try:
+                    print("visualizing")
+                    self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+
+                except Exception as e:
+                    print(f"Visualizing error for planner {key}: {e}")
+                    print(f"Exception details: {e}")
+                    pass
 
             #     # Save Solution in whole_solution as tuple of x and y coordinates
             #     graph = resultList[i].planner.graph
