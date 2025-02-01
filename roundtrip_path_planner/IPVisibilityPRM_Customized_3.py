@@ -11,6 +11,8 @@ import networkx as nx
 from scipy.spatial import cKDTree
 from IPPerfMonitor import IPPerfMonitor
 
+from itertools import combinations
+
 class VisibilityStatsHandler():
     
     def __init__(self):
@@ -45,7 +47,7 @@ class VisPRM_Custom_3(PRMBase):
     def _learnRoadmap(self, ntry):
 
         #nodeNumber = 2
-        current_node_number = len(self.graph.nodes())
+        current_node_number = len(self.statsHandler.graph.nodes())
         print(f"Current node number: {current_node_number}")
         nodeNumber = current_node_number + 1
         print(f"New node number: {nodeNumber}")
@@ -79,7 +81,8 @@ class VisPRM_Custom_3(PRMBase):
                                 #print "ADDED Connection node", nodeNumber
                                 merged = True
                         # break, if node was visible,because visibility from one node of the guard is sufficient...
-                        if found == True: break;
+                        if found == True:
+                            break;
                 # break, if connection was found. Reason: computed connected components (comp) are not correct any more, 
                 # they've changed because of merging
                 if merged == True: # how  does it change the behaviour? What has to be done to keep the original behaviour?
@@ -93,14 +96,6 @@ class VisPRM_Custom_3(PRMBase):
                 currTry += 1
 
             nodeNumber += 1
-
-        # # connect all nodes that can see each other - for shorter paths with the same nodes
-        # for node in self.graph.nodes():
-        #     if self.graph.nodes[node].get('NodeType') != 'Guard':
-        #         for other_node in self.graph.nodes():
-        #             if node != other_node and self.graph.nodes[other_node].get('NodeType') != 'Guard':
-        #                 if self._isVisible(self.graph.nodes[node]['pos'], self.graph.nodes[other_node]['pos']):
-        #                     self.graph.add_edge(node, other_node)
 
     @IPPerfMonitor
     def planPath(self, startList, goalList, config):
@@ -138,23 +133,34 @@ class VisPRM_Custom_3(PRMBase):
         else:
             self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
             self.graph.add_node("goal", pos=checkedGoalList[0], color='red', nodeType = 'Guard')
+            print(f"Start and goal are not visible to each other")
 
             
             # Aufteilen der ntry in kleinere Schritte
             step_size = 10  # Anzahl der Versuche pro Schritt
-            for i in range(0, config["ntry"], step_size):
-                current_iteration = i // step_size + 1
+            for i in range(0, config["ntry"]//step_size):
                 self._learnRoadmap(step_size)
+
                 try:
+                    print(f"X Koordinate Start: {self.graph.nodes['start']['pos'][0]}\nY Koordinate Start: {self.graph.nodes['start']['pos'][1]}")
+                    test_path = nx.shortest_path(self.graph, "start", "goal")                    
+                    print(f"Testpath found in iteration {i}: {test_path}")
+                    # connect all nodes that can see each other - for shorter paths with the same nodes
+                    for node in self.graph.nodes():
+                        if self.graph.nodes[node].get('NodeType') != 'Guard':
+                            for other_node in self.graph.nodes():
+                                if node != other_node and self.graph.nodes[other_node].get('NodeType') != 'Guard':
+                                    if self._isVisible(self.graph.nodes[node]['pos'], self.graph.nodes[other_node]['pos']):
+                                        self.graph.add_edge(node, other_node)
+
                     path = nx.shortest_path(self.graph, "start", "goal")
-                    # formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]
-                    if self._isPathCollisionFree(path):
-                        print(f"Path found: Stepsize = {step_size}; current iteration {current_iteration}")
-                        return path
-                    else:
-                        print(f"Path found in iteration {current_iteration} but not collision free, continuing...")
-                except nx.NetworkXNoPath:
-                    print(f"No path found in iteration {current_iteration}, continuing...")
+                    print(f"Path found in iteration {i}: {path}")
+
+                    return path
+
+                except:
+                    print(f"No path found in {i} iteration")
+                    continue
 
             print("No path found after all iterations")
             return []
