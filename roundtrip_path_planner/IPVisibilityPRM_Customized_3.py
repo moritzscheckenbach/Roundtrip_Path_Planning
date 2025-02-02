@@ -58,7 +58,7 @@ class VisPRM_Custom_3(PRMBase):
             q_pos = self._getRandomFreePosition()
             if self.statsHandler:
                 self.statsHandler.addNodeAtPos(nodeNumber, q_pos)
-           
+
             g_vis = None
         
             # every connected component represents one guard

@@ -1,7 +1,5 @@
 
 
-- Vollendung / Bugfixes Early Stopping
-- Bugfix Connect all
 
 - evtl. falls Zeit: Optimierung Roundtrip Path Planner mit genormter Aufrufmethode der PRM Erstellung
 

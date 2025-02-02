@@ -135,6 +135,25 @@ class Roundtrip_Path_Planner:
         self.plannerName = plannerName # reference to algorithm
         self.config = supportedPlanners # dictionary with the needed information about the algorithms configuration options
 
+
+    def _getRoadmap(self, config):
+        if self.plannerName == "basePRM":
+            radius = config["radius"]
+            numNodes = config["numNodes"]
+            self._learnRoadmapNearestNeighbour(radius, numNodes)
+        elif self.plannerName == "lazyPRM":
+            initialRoadmapSize = config["initialRoadmapSize"]
+            updateRoadmapSize = config["updateRoadmapSize"]
+            kNearest = config["kNearest"]
+            self._buildRoadmap(initialRoadmapSize, kNearest)
+        elif self.plannerName == "visibilityPRM":
+            ntry = config["ntry"]
+            self._learnRoadmap(ntry)
+        elif self.plannerName == "visibilityPRM_custom":
+            ntry = config["ntry"]
+            self._learnRoadmap(ntry)
+
+
     def plan(self):
         resultList = list()
         key = self.plannerName # key enthält den Nemen des Planers
