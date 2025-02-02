@@ -6,10 +6,13 @@
 
 
 
+im visibilityPRM_custom
+- 1x _learnRoadmap (mit early stopping & connect all nodes [für multiQuery])
+- 1x _learnRoadmap (ohne early stopping & connect all nodes [für singleQuery])
+- 1x PlanPath (mit early stopping & connect all nodes [für singleQuery])
 
-
-
-
+oder (Idee)
+ - Anpassen von PlanPath, sodass auch für single query die gleiche _learnRoadmap methode wie für das multiquery verwendet werden kann
 
 
 

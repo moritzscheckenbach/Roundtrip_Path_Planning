@@ -11,6 +11,8 @@ import networkx as nx
 from scipy.spatial import cKDTree
 from IPPerfMonitor import IPPerfMonitor
 
+from itertools import combinations
+
 class VisibilityStatsHandler():
     
     def __init__(self):
@@ -24,21 +26,31 @@ class VisibilityStatsHandler():
         self.graph.add_edge(fr, to)
         return
         
-class VisPRM_Custom(PRMBase):
+class VisPRM_Custom_3(PRMBase):
     """Class implements an simplified version of a visibility PRM"""
 
     def __init__(self, _collChecker, _statsHandler = None):
-        super(VisPRM_Custom, self).__init__(_collChecker)
+        super(VisPRM_Custom_3, self).__init__(_collChecker)
         self.graph = nx.Graph()
         self.statsHandler = VisibilityStatsHandler() # not yet fully customizable (s. parameters of constructors)
                 
     def _isVisible(self, pos, guardPos):
         return not self._collisionChecker.lineInCollision(pos, guardPos)
+    
+    def _isPathCollisionFree(self, path):
+        for i in range(len(path) - 1):
+            if self._collisionChecker.lineInCollision(self.graph.nodes[path[i]]['pos'], self.graph.nodes[path[i + 1]]['pos']):
+                return False
+        return True
 
     @IPPerfMonitor
     def _learnRoadmap(self, ntry):
 
-        nodeNumber = 2
+        #nodeNumber = 2
+        current_node_number = len(self.statsHandler.graph.nodes())
+        print(f"Current node number: {current_node_number}")
+        nodeNumber = current_node_number + 1
+        print(f"New node number: {nodeNumber}")
         currTry = 0
         while currTry < ntry:
             #print currTry
@@ -46,7 +58,7 @@ class VisPRM_Custom(PRMBase):
             q_pos = self._getRandomFreePosition()
             if self.statsHandler:
                 self.statsHandler.addNodeAtPos(nodeNumber, q_pos)
-           
+
             g_vis = None
         
             # every connected component represents one guard
@@ -69,7 +81,8 @@ class VisPRM_Custom(PRMBase):
                                 #print "ADDED Connection node", nodeNumber
                                 merged = True
                         # break, if node was visible,because visibility from one node of the guard is sufficient...
-                        if found == True: break;
+                        if found == True:
+                            break;
                 # break, if connection was found. Reason: computed connected components (comp) are not correct any more, 
                 # they've changed because of merging
                 if merged == True: # how  does it change the behaviour? What has to be done to keep the original behaviour?
@@ -115,19 +128,38 @@ class VisPRM_Custom(PRMBase):
             self.graph.add_edge("start", "goal")
             path = nx.shortest_path(self.graph,"start","goal")
             #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in ["start", "goal"]]
+            print(f"Path found instantly due to visibility of start and goal: {path}")
             return path
         else:
             self.graph.add_node("start", pos=checkedStartList[0], color='red', nodeType = 'Guard')
             self.graph.add_node("goal", pos=checkedGoalList[0], color='red', nodeType = 'Guard')
+            print(f"Start and goal are not visible to each other")
+            
+            # Aufteilen der ntry in kleinere Schritte
+            step_size = 10  # Anzahl der Versuche pro Schritt
+            for i in range(0, config["ntry"]//step_size):
+                self._learnRoadmap(step_size)
 
-            self._learnRoadmap(config["ntry"])
+                try:
+                    print(f"X Koordinate Start: {self.graph.nodes['start']['pos'][0]}\nY Koordinate Start: {self.graph.nodes['start']['pos'][1]}")
+                    test_path = nx.shortest_path(self.graph, "start", "goal")                    
+                    print(f"Testpath found in iteration {i}: {test_path}")
+                    # connect all nodes that can see each other - for shorter paths with the same nodes
+                    for node in self.graph.nodes():
+                        if self.graph.nodes[node].get('NodeType') != 'Guard':
+                            for other_node in self.graph.nodes():
+                                if node != other_node and self.graph.nodes[other_node].get('NodeType') != 'Guard':
+                                    if self._isVisible(self.graph.nodes[node]['pos'], self.graph.nodes[other_node]['pos']):
+                                        self.graph.add_edge(node, other_node)
 
-            try:
-                path = nx.shortest_path(self.graph,"start","goal")
-                #formatted_path = ["-{}-{}-".format(self.graph.nodes[node]['pos'][0], self.graph.nodes[node]['pos'][1]) for node in path]
-            except:
-                print("No path found")
-                return []
-            #print(f"Self.graph ist {self.graph}")
-            #print(f"Solution_Visibility ist {path}")
-            return path
+                    path = nx.shortest_path(self.graph, "start", "goal")
+                    print(f"Path found in iteration {i}: {path}")
+
+                    return path
+
+                except:
+                    print(f"No path found in {i} iteration")
+                    continue
+
+            print("No path found after all iterations")
+            return []

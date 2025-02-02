@@ -27,8 +27,8 @@ import IPPRMBase
 import IPRRT
 import IPVisibilityPRM
 import IPVisibilityPRM_Customized_1
-import IPVisibilityPRM_Customized_2
-import IPVisibilityPRM_Customized_3
+import roundtrip_path_planner.IPVisibilityPRM_Customized_connect_all_nodes as IPVisibilityPRM_Customized_connect_all_nodes
+import roundtrip_path_planner.IPVisibilityPRM_Customized as IPVisibilityPRM_Customized
 import IPVisibilityPRM_Customized_4
 
 import IPVISBasicPRM
@@ -96,11 +96,11 @@ class Roundtrip_Path_Planner:
 
         visbility_custom_2_Config = dict()
         visbility_custom_2_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom_2"] = [IPVisibilityPRM_Customized_2.VisPRM_Custom_2, visbility_custom_2_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
+        supportedPlanners["visibilityPRM_custom_2"] = [IPVisibilityPRM_Customized_connect_all_nodes.VisPRM_Custom_2, visbility_custom_2_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
         visbility_custom_3_Config = dict()
         visbility_custom_3_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom_3"] = [IPVisibilityPRM_Customized_3.VisPRM_Custom_3, visbility_custom_3_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
+        supportedPlanners["visibilityPRM_custom_3"] = [IPVisibilityPRM_Customized.VisPRM_Custom_3, visbility_custom_3_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
