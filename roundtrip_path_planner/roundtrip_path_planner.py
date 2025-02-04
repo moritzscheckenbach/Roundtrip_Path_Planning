@@ -26,10 +26,8 @@ import IPLazyPRM
 import IPPRMBase
 import IPRRT
 import IPVisibilityPRM
-import IPVisibilityPRM_Customized_1
-import roundtrip_path_planner.IPVisibilityPRM_Customized_connect_all_nodes as IPVisibilityPRM_Customized_connect_all_nodes
-import roundtrip_path_planner.IPVisibilityPRM_Customized as IPVisibilityPRM_Customized
-import IPVisibilityPRM_Customized_4
+import IPVisibilityPRM_Customized
+import IPVisibilityPRM_Customized_connect_all_nodes
 
 import IPVISBasicPRM
 import IPVISLazyPRM
@@ -92,15 +90,11 @@ class Roundtrip_Path_Planner:
 
         visbility_custom_Config = dict()
         visbility_custom_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized_1.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
+        supportedPlanners["visibilityPRM_custom"] = [IPVisibilityPRM_Customized.VisPRM_Custom, visbility_custom_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
-        visbility_custom_2_Config = dict()
-        visbility_custom_2_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom_2"] = [IPVisibilityPRM_Customized_connect_all_nodes.VisPRM_Custom_2, visbility_custom_2_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
-
-        visbility_custom_3_Config = dict()
-        visbility_custom_3_Config["ntry"] = 300
-        supportedPlanners["visibilityPRM_custom_3"] = [IPVisibilityPRM_Customized.VisPRM_Custom_3, visbility_custom_3_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
+        visbility_custom_can_Config = dict()
+        visbility_custom_can_Config["ntry"] = 300
+        supportedPlanners["visibilityPRM_custom_can"] = [IPVisibilityPRM_Customized_connect_all_nodes.VisPRM_Custom_can, visbility_custom_can_Config, IPVISVisibilityPRM_Customized.visibilityPRM_custom_Visualize]
 
         # kClosestConfig = dict()
         # kClosestConfig["k"] = 7
@@ -190,22 +184,90 @@ class Roundtrip_Path_Planner:
         # Pfadplanung für die besuchten Ziele
         usedstart = self.startpos[0]
 
-        for i in range(len(pastgoals)):
-            #print(f"Usedstart: {usedstart}")
-            #print(f"Pastgoals: {pastgoals}")
-            tmp_1 = []
-            tmp_1.append(usedstart)
-            tmp_2 = []
-            tmp_2.append(pastgoals[i])
+
+
+####################################################
+
+        final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+
+
+
+####################################################
+
+        try:
+            resultList.append(ResultCollection(key,
+                                            planner, 
+                                            self.environment,
+                                            nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
+                                            #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
+                                            IPPerfMonitor.dataFrame()
+                                            ))
+                            
+            # Visualisierung der Ergebnisse
+            fig_local = plt.figure(figsize=(10,10))
+            ax = fig_local.add_subplot(1,1,1)
+            title = f"{self.plannerName} - {resultList[i].benchmark.name}"
+            if resultList[i].solution == []:
+                title += " (No path found!)"
+            title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
+            ax.set_title(title)
+            Env_Limits = planner._collisionChecker.getEnvironmentLimits()
+            x_Limits = Env_Limits[0]
+            y_Limits = Env_Limits[1]
+            ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
+            ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
+            ax.set_xlim(0, 22)
+            ax.set_ylim(0, 22)
+            ax.set_xlabel('X-Achse')
+            ax.set_ylabel('Y-Achse')
+            ax.grid(True)
+
+            # Save Solution in whole_solution as tuple of x and y coordinates
+            graph = resultList[i].planner.graph
+            solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+            # Füge die formatierte Version der SolutionNode hinzu
+            for node in solution:
+                if 'pos' in graph.nodes[node]:
+                    x = graph.nodes[node]['pos'][0]
+                    y = graph.nodes[node]['pos'][1]
+                    whole_solution.append((x, y))
             
-            print(f"Startpos: {tmp_1}")
-            print(f"Goalpos: {tmp_2}")
+            # Füge das Ziel der aktuellen Lösung hinzu
+            whole_solution.append((pastgoals[i][0], pastgoals[i][1]))
+            print(f"whole solution after adding goal: {whole_solution}")
+
+            try:
+                self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+            except Exception as e:
+                print (f"Visualizing error for planner {key}: {e}")
+                print(f"Exception details: {e}")
+                pass
+
+        except Exception as e:
+            print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
+            print(f"Exception details: {e}")
+            pass
+
+        usedstart = pastgoals[i]
+        print(f"New Usedstart: {usedstart}")
+
+
+
+
+
+#####################################################
+
+        for i in range(len(pastgoals)):
+            
+            print(f"Startpos: {usedstart}")
+            print(f"Goalpos: {pastgoals}")
 
             try:
                 resultList.append(ResultCollection(key,
                                                 planner, 
-                                                self.environment, 
-                                                planner.planPath(tmp_1,tmp_2,producer[1]), # Aufruf der Methode planPath des Planers
+                                                self.environment,
+                                                nx.shortest_path(final_graph, f'goal_{i+1}', f'goal_{i+2}'), # Aufruf der Methode createGraph des Planers
+                                                #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                                 IPPerfMonitor.dataFrame()
                                                 ))
                                 

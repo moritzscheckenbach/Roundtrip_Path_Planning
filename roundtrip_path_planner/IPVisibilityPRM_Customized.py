@@ -11,8 +11,6 @@ import networkx as nx
 from scipy.spatial import cKDTree
 from IPPerfMonitor import IPPerfMonitor
 
-from itertools import combinations
-
 class VisibilityStatsHandler():
     
     def __init__(self):
@@ -26,11 +24,11 @@ class VisibilityStatsHandler():
         self.graph.add_edge(fr, to)
         return
         
-class VisPRM_Custom_3(PRMBase):
+class VisPRM_Custom(PRMBase):
     """Class implements an simplified version of a visibility PRM"""
 
     def __init__(self, _collChecker, _statsHandler = None):
-        super(VisPRM_Custom_3, self).__init__(_collChecker)
+        super(VisPRM_Custom, self).__init__(_collChecker)
         self.graph = nx.Graph()
         self.statsHandler = VisibilityStatsHandler() # not yet fully customizable (s. parameters of constructors)
                 
@@ -163,3 +161,102 @@ class VisPRM_Custom_3(PRMBase):
 
             print("No path found after all iterations")
             return []
+        
+
+    def createGraph(self, startList, goalList, config):
+
+        # 0. reset
+        self.graph.clear()
+        self.statsHandler.graph.clear()
+        
+        # 1. check start and goal whether collision free (s. BaseClass)
+        checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
+
+        # 2. Check if start and goal can see each other
+        self.statsHandler.addNodeAtPos(0, checkedStartList[0])
+        for i in range(0, len(checkedGoalList)):
+            self.statsHandler.addNodeAtPos(i+1, checkedGoalList[i])
+        
+        all_nodes_are_visible = True
+        for i in range(len(self.statsHandler.graph.nodes())-1):
+            if self._isVisible(self.statsHandler.graph.nodes[i]['pos'], self.statsHandler.graph.nodes[i+1]['pos']):
+                continue
+            else:
+                all_nodes_are_visible = False
+                break
+    
+        self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+
+        for i in range(0, len(checkedGoalList)):
+            self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
+            if i > 0 and all_nodes_are_visible == True:
+                self.graph.add_edge(f"goal_{i}", f"goal_{i+1}")
+        if all_nodes_are_visible == True:
+            return self.graph
+        
+        # if start and goal are not visible to each other build roadmap
+        else:
+            # Aufteilen der ntry in kleinere Schritte
+            step_size = 10  # Anzahl der Versuche pro Schritt
+            for i in range(0, config["ntry"]//step_size):
+                self._learnRoadmap(step_size)
+
+                try:
+                    
+
+                    # 3. find connection of start and goal to roadmap
+                    # find nearest, collision-free connection between node on graph and start
+                    posList = nx.get_node_attributes(self.graph,'pos')
+                    kdTree = cKDTree(list(posList.values()))
+                    
+                    result = kdTree.query(checkedStartList[0],k=5)
+                    for node in result[1]:
+                        if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                            self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+                            self.graph.add_edge("start", list(posList.keys())[node])
+                            break
+
+                    for i in range(0, len(checkedGoalList)-1):
+                        result = kdTree.query(checkedGoalList[i],k=5)
+                        for node in result[1]:
+                            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                                self.graph.add_node("goal", pos=checkedGoalList[i], color='lightgreen')
+                                self.graph.add_edge("goal", list(posList.keys())[node])
+                                break
+
+                    try:
+                        test_path = nx.shortest_path(self.graph,"start","goal")
+                        for i in range(0, len(checkedGoalList)-1):
+                            test_path = nx.shortest_path(self.graph,f"goal_{i+1}",f"goal_{i+2}")
+                                                
+                        # connect all nodes that can see each other - for shorter paths with the same nodes
+                        for node in self.graph.nodes():
+                            if self.graph.nodes[node].get('NodeType') != 'Guard':
+                                for other_node in self.graph.nodes():
+                                    if node != other_node and self.graph.nodes[other_node].get('NodeType') != 'Guard':
+                                        if self._isVisible(self.graph.nodes[node]['pos'], self.graph.nodes[other_node]['pos']):
+                                            self.graph.add_edge(node, other_node)
+
+                        # path = nx.shortest_path(self.graph, "start", "goal")
+                        # print(f"Path found in iteration {i}: {path}")
+
+                        return self.graph
+
+                    except:
+                        return []
+
+                except:
+                    print(f"No path found in {i} iteration")
+                    continue
+
+            print("No path found after all iterations")
+            return []    
+
+
+
+
+
+
+
+
+        

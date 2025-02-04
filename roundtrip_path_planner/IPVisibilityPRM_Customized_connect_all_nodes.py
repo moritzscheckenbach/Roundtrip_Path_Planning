@@ -24,11 +24,11 @@ class VisibilityStatsHandler():
         self.graph.add_edge(fr, to)
         return
         
-class VisPRM_Custom_2(PRMBase):
+class VisPRM_Custom_can(PRMBase):
     """Class implements an simplified version of a visibility PRM"""
 
     def __init__(self, _collChecker, _statsHandler = None):
-        super(VisPRM_Custom_2, self).__init__(_collChecker)
+        super(VisPRM_Custom_can, self).__init__(_collChecker)
         self.graph = nx.Graph()
         self.statsHandler = VisibilityStatsHandler() # not yet fully customizable (s. parameters of constructors)
                 
@@ -46,7 +46,7 @@ class VisPRM_Custom_2(PRMBase):
             q_pos = self._getRandomFreePosition()
             if self.statsHandler:
                 self.statsHandler.addNodeAtPos(nodeNumber, q_pos)
-           
+
             g_vis = None
         
             # every connected component represents one guard
