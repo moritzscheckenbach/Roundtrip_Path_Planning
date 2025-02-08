@@ -52,6 +52,14 @@ class ResultCollection (object):
         self.solution = solution
         self.perfDataFrame = perfDataFrame
 
+class GetRoadmap (object):
+    def __init__(self, plannerFactoryName, planner, benchmark, solution, perfDataFrame):
+        self.plannerFactoryName = plannerFactoryName
+        self.planner = planner
+        self.benchmark = benchmark
+        self.solution = solution
+        self.perfDataFrame = perfDataFrame
+
 
 ########################
 # Roundtrip Path Planner
@@ -189,6 +197,60 @@ class Roundtrip_Path_Planner:
 ####################################################
 
         final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+
+        try:
+            
+            # Hier werden die PRMs aufgerufen
+            if key == 'basePRM':
+                print('Teststelle 1 basePRM ')
+                resultList.append(GetRoadmap(
+                    key,
+                    planner,
+                    self.environment,
+                    planner._learnRoadmapNearestNeighbour(radius = 5.0, numNodes = 300), ########## config einfügen
+                    IPPerfMonitor.dataFrame()
+                ))
+                print('Teststelle 2 basePRM ')
+                # add checkedstartlist and chesckedgoallist as nodes to the graph
+                
+
+            elif key == "visibilityPRM":
+                print('Teststelle 1 ')
+                resultList.append(GetRoadmap(
+                    key,
+                    planner,
+                    self.environment,
+                    planner._learnRoadmap(ntry = 300), ########## config einfügen
+                    IPPerfMonitor.dataFrame()
+                ))
+                print('Teststelle 2 ')
+            
+
+            elif key == 'visibilityPRM_custom':
+                resultList.append(GetRoadmap(
+                    key,
+                    planner,
+                    self.environment,
+                    planner._learnRoadmap(ntry = 300), ########## config einfügen
+                    IPPerfMonitor.dataFrame()
+                ))
+
+            elif key == 'LazyPRM':
+                resultList.append(GetRoadmap(
+                    key,
+                    planner,
+                    self.environment,
+                    planner._learnRoadmap(), ########## config einfügen
+                    IPPerfMonitor.dataFrame()
+                ))
+
+            else: 
+                print("No valid planner for multiquery planning selected")
+        
+        except Exception as e:
+            print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nMulti Query")
+            print(f"Exception details: {e}")
+            pass
 
 
 

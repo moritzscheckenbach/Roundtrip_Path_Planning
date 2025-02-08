@@ -250,13 +250,4 @@ class VisPRM_Custom(PRMBase):
                     continue
 
             print("No path found after all iterations")
-            return []    
-
-
-
-
-
-
-
-
-        
+            return []
