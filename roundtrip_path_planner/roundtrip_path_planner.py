@@ -52,14 +52,6 @@ class ResultCollection (object):
         self.solution = solution
         self.perfDataFrame = perfDataFrame
 
-class GetRoadmap (object):
-    def __init__(self, plannerFactoryName, planner, benchmark, solution, perfDataFrame):
-        self.plannerFactoryName = plannerFactoryName
-        self.planner = planner
-        self.benchmark = benchmark
-        self.solution = solution
-        self.perfDataFrame = perfDataFrame
-
 
 ########################
 # Roundtrip Path Planner
@@ -196,14 +188,14 @@ class Roundtrip_Path_Planner:
 
 ####################################################
 
-        final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+        
 
         try:
             
             # Hier werden die PRMs aufgerufen
             if key == 'basePRM':
                 print('Teststelle 1 basePRM ')
-                resultList.append(GetRoadmap(
+                resultList.append(ResultCollection(
                     key,
                     planner,
                     self.environment,
@@ -215,40 +207,45 @@ class Roundtrip_Path_Planner:
                 
 
             elif key == "visibilityPRM":
-                print('Teststelle 1 ')
-                resultList.append(GetRoadmap(
+                print('Teststelle 1 visibilityPRM')
+                resultList.append(ResultCollection(
                     key,
                     planner,
                     self.environment,
                     planner._learnRoadmap(ntry = 300), ########## config einfügen
                     IPPerfMonitor.dataFrame()
                 ))
-                print('Teststelle 2 ')
+                print('Teststelle 2 visibilityPRM')
             
 
             elif key == 'visibilityPRM_custom':
-                resultList.append(GetRoadmap(
-                    key,
-                    planner,
+                final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+                print('Teststelle 1 VisibilityPRM Custom')
+                resultList.append(ResultCollection(key,
+                    planner, 
                     self.environment,
-                    planner._learnRoadmap(ntry = 300), ########## config einfügen
+                    nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
+                    #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                     IPPerfMonitor.dataFrame()
                 ))
+                print('Teststelle 2 VisibilityPRM Custom')
 
             elif key == 'LazyPRM':
-                resultList.append(GetRoadmap(
+                print('Teststelle 1 LazyPRM')
+                resultList.append(ResultCollection(
                     key,
                     planner,
                     self.environment,
                     planner._learnRoadmap(), ########## config einfügen
                     IPPerfMonitor.dataFrame()
                 ))
+                print('Teststelle 2 LazyPRM')
 
             else: 
                 print("No valid planner for multiquery planning selected")
         
         except Exception as e:
-            print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nMulti Query")
+            print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nMulti Query, PRM Planning")
             print(f"Exception details: {e}")
             pass
 
@@ -257,13 +254,13 @@ class Roundtrip_Path_Planner:
 ####################################################
 
         try:
-            resultList.append(ResultCollection(key,
+            """resultList.append(ResultCollection(key,
                                             planner, 
                                             self.environment,
                                             nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
                                             #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                             IPPerfMonitor.dataFrame()
-                                            ))
+                                            ))"""
                             
             # Visualisierung der Ergebnisse
             fig_local = plt.figure(figsize=(10,10))
