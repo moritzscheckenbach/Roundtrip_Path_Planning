@@ -65,7 +65,7 @@ class VisPRM_Custom(PRMBase):
                 found = False
                 merged = False
                 for g in comp: # connected components consists of guards and connection: only test nodes of type 'Guards'
-                    if self.graph.nodes()[g]['nodeType'] == 'Guard':
+                    if 'nodeType' in self.graph.nodes()[g] and self.graph.nodes()[g]['nodeType'] == 'Guard':
                         if self.statsHandler:
                             self.statsHandler.addVisTest(nodeNumber, g)
                         if self._isVisible(q_pos,self.graph.nodes()[g]['pos']):
@@ -161,21 +161,25 @@ class VisPRM_Custom(PRMBase):
 
             print("No path found after all iterations")
             return []
-        
+    
 
+    @IPPerfMonitor
     def createGraph(self, startList, goalList, config):
-
+        print("ist in der methode")
         # 0. reset
         self.graph.clear()
         self.statsHandler.graph.clear()
+        print("Graph und StatsHandler wurden zurückgesetzt")
         
         # 1. check start and goal whether collision free (s. BaseClass)
         checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
+        print(f"Start und Ziel überprüft: {checkedStartList}, {checkedGoalList}")
 
         # 2. Check if start and goal can see each other
         self.statsHandler.addNodeAtPos(0, checkedStartList[0])
         for i in range(0, len(checkedGoalList)):
             self.statsHandler.addNodeAtPos(i+1, checkedGoalList[i])
+        print("Start- und Zielknoten zur StatsHandler hinzugefügt")
         
         all_nodes_are_visible = True
         for i in range(len(self.statsHandler.graph.nodes())-1):
@@ -184,54 +188,85 @@ class VisPRM_Custom(PRMBase):
             else:
                 all_nodes_are_visible = False
                 break
+        print(f"Alle Knoten sind sichtbar: {all_nodes_are_visible}")
     
         self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+        print("Startknoten zum Graph hinzugefügt")
 
         for i in range(0, len(checkedGoalList)):
             self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
             if i > 0 and all_nodes_are_visible == True:
                 self.graph.add_edge(f"goal_{i}", f"goal_{i+1}")
+        print("Zielknoten zum Graph hinzugefügt")
         
         if all_nodes_are_visible == True:
-            print('All nodes are visible')
+            print("Alle Knoten sind sichtbar, Graph wird zurückgegeben")
             return self.graph
-            
         
-        else: # if start and goal are not visible to each other build roadmap
+        # if start and goal are not visible to each other build roadmap
+        else:
+            print("Start und Ziel sind nicht sichtbar, Roadmap wird erstellt")
             # Aufteilen der ntry in kleinere Schritte
             step_size = 10  # Anzahl der Versuche pro Schritt
-            print("Config, Num Nodes:", config["ntry"])
-            print("Config, Datatype:", type(config["ntry"]))
             for i in range(0, config["ntry"]//step_size):
+                print(f"Roadmap Lernschritt {i}")
                 self._learnRoadmap(step_size)
-                print('i:', i)
-                try:
-                    
 
+                print("Knoten im Graphen:")
+                print(self.graph.nodes(data=True))  # Gibt alle Knoten und Attribute aus
+
+                print("\nKanten im Graphen:")
+                print(self.graph.edges())  # Gibt alle Verbindungen aus
+
+
+                try:
                     # 3. find connection of start and goal to roadmap
                     # find nearest, collision-free connection between node on graph and start
+                    
+                    # Liste der Knoten erstellen
+                    NotRoadmap = ["start"]
+                    for i in range(len(checkedGoalList)):
+                        NotRoadmap.append(f"goal_{i+1}")
+                    print("Liste der Knoten im Graph:", NotRoadmap)
+                    
+                   
                     posList = nx.get_node_attributes(self.graph,'pos')
+                    print("PosList:", posList)
                     kdTree = cKDTree(list(posList.values()))
                     
                     result = kdTree.query(checkedStartList[0],k=5)
-                    for node in result[1]:
+                    print("result:", result)
+                    for node in result[1] and node not in NotRoadmap:
                         if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
                             self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
                             self.graph.add_edge("start", list(posList.keys())[node])
+                            print("Startknoten mit Roadmap verbunden")
                             break
-
-                    for i in range(0, len(checkedGoalList)-1):
+                    for i in range(0, len(checkedGoalList)):
                         result = kdTree.query(checkedGoalList[i],k=5)
-                        for node in result[1]:
+                        for node in result[1] and node not in NotRoadmap:
                             if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                                self.graph.add_node("goal", pos=checkedGoalList[i], color='lightgreen')
-                                self.graph.add_edge("goal", list(posList.keys())[node])
+                                self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
+                                self.graph.add_edge(f"goal_{i+1}", list(posList.keys())[node])
+                                print(f"Zielknoten {i} mit Roadmap verbunden")
                                 break
 
+                    
+                    print("Start-Knoten in Graph:", "start" in self.graph)
+                    print("Ziel-Knoten in Graph:", "goal_1" in self.graph)
+
+
+                    print("Start-Knoten Nachbarn:", list(self.graph.neighbors("start")))
+                    print("Goal_1 Nachbarn:", list(self.graph.neighbors("goal_1")))
+
+
+            
                     try:
-                        test_path = nx.shortest_path(self.graph,"start","goal")
+                        test_path = nx.shortest_path(self.graph,"start","goal_1")
+                        print ('erster testpfad wurde gefunden')
                         for i in range(0, len(checkedGoalList)-1):
                             test_path = nx.shortest_path(self.graph,f"goal_{i+1}",f"goal_{i+2}")
+                        print("Kürzester Pfad gefunden")
                                                 
                         # connect all nodes that can see each other - for shorter paths with the same nodes
                         for node in self.graph.nodes():
@@ -240,18 +275,17 @@ class VisPRM_Custom(PRMBase):
                                     if node != other_node and self.graph.nodes[other_node].get('NodeType') != 'Guard':
                                         if self._isVisible(self.graph.nodes[node]['pos'], self.graph.nodes[other_node]['pos']):
                                             self.graph.add_edge(node, other_node)
-
-                        # path = nx.shortest_path(self.graph, "start", "goal")
-                        # print(f"Path found in iteration {i}: {path}")
+                        print("Alle sichtbaren Knoten verbunden")
 
                         return self.graph
 
                     except:
-                        return []
+                        print("Kein kürzester Pfad gefunden")
+                        continue
 
                 except:
-                    print(f"No path found in {i} iteration")
+                    print(f"Kein Pfad in Iteration {i} gefunden")
                     continue
 
-            print("No path found after all iterations")
+            print("Kein Pfad nach allen Iterationen gefunden")
             return []

@@ -186,81 +186,23 @@ class Roundtrip_Path_Planner:
 
 
 
-        """####################################################
+####################################################
 
-        try:
-            
-            # Hier werden die PRMs aufgerufen
-            if key == 'basePRM':
-                print('Teststelle 1 basePRM ')
-                resultList.append(ResultCollection(
-                    key,
-                    planner,
-                    self.environment,
-                    planner._learnRoadmapNearestNeighbour(radius = 5.0, numNodes = 300), ########## config einfügen
-                    IPPerfMonitor.dataFrame()
-                ))
-                print('Teststelle 2 basePRM ')
-                # add checkedstartlist and chesckedgoallist as nodes to the graph
-                
-
-            elif key == "visibilityPRM":
-                print('Teststelle 1 visibilityPRM')
-                resultList.append(ResultCollection(
-                    key,
-                    planner,
-                    self.environment,
-                    planner._learnRoadmap(ntry = 300), ########## config einfügen
-                    IPPerfMonitor.dataFrame()
-                ))
-                print('Teststelle 2 visibilityPRM')
-            
-
-            elif key == 'visibilityPRM_custom':
-                final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
-                print('Teststelle 1 VisibilityPRM Custom')
-                resultList.append(ResultCollection(key,
-                    planner, 
-                    self.environment,
-                    nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
-                    #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
-                    IPPerfMonitor.dataFrame()
-                ))
-                print('Teststelle 2 VisibilityPRM Custom')
-
-            elif key == 'LazyPRM':
-                print('Teststelle 1 LazyPRM')
-                resultList.append(ResultCollection(
-                    key,
-                    planner,
-                    self.environment,
-                    planner._learnRoadmap(), ########## config einfügen
-                    IPPerfMonitor.dataFrame()
-                ))
-                print('Teststelle 2 LazyPRM')
-
-            else: 
-                print("No valid planner for multiquery planning selected")
-        
-        except Exception as e:
-            print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nMulti Query, PRM Planning")
-            print(f"Exception details: {e}")
-            pass"""
+        final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
 
 
 
 ####################################################
-        """
-        try: # Funktion doppelt vorhanden ?
+
+        try:
             resultList.append(ResultCollection(key,
                                             planner, 
                                             self.environment,
-                                            nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
+                                            nx.shortest_path(planner.createGraph(final_graph, 'start', 'goal_1')), # Aufruf der Methode createGraph des Planers
                                             #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                             IPPerfMonitor.dataFrame()
                                             ))
-                            
-            print('i-ter durchlauf: ', i)
+            print(f"Start zu ziel")               
             # Visualisierung der Ergebnisse
             fig_local = plt.figure(figsize=(10,10))
             ax = fig_local.add_subplot(1,1,1)
@@ -302,14 +244,14 @@ class Roundtrip_Path_Planner:
                 pass
 
         except Exception as e:
-            print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR")
+            print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
             print(f"Exception details: {e}")
             pass
 
         usedstart = pastgoals[i]
         print(f"New Usedstart: {usedstart}")
 
-        """
+
 
 
 
@@ -319,20 +261,18 @@ class Roundtrip_Path_Planner:
             
             print(f"Startpos: {usedstart}")
             print(f"Goalpos: {pastgoals}")
-            print('Vor final_graph. i: ', i)
-            print('Producer: ', producer[1])
-            final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
-            print('Im final Graph: ', final_graph)
-            #try:
-            if True:
+            print(f"versucht zwischenziel")   
+            try:
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment,
-                                                nx.shortest_path(final_graph, f'goal_{i+1}', f'goal_{i+2}'), # Aufruf der Methode createGraph des Planers
+                                                nx.shortest_path(planner.createGraph(final_graph, f'goal_{i+1}', f'goal_{i+2}')), # Aufruf der Methode createGraph des Planers
                                                 #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
-                                                IPPerfMonitor.dataFrame()
+                                                IPPerfMonitor.dataFrame(),
+                                                print(f"hat zwischenziel")  
                                                 ))
-                                
+         
+
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
                 ax = fig_local.add_subplot(1,1,1)
@@ -373,15 +313,13 @@ class Roundtrip_Path_Planner:
                     print(f"Exception details: {e}")
                     pass
 
-            #except Exception as e:
-            #    print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR duplikat")
-            #    print(f"Exception details: {e}")
-            #    pass
+            except Exception as e:
+                print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
+                print(f"Exception details: {e}")
+                pass
 
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
-
-
 
 
         vollstaendiger_pfad = True
