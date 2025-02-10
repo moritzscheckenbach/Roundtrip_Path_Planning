@@ -189,7 +189,7 @@ class Roundtrip_Path_Planner:
 ####################################################
 
         final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
-
+        print(f"nach final graph")
 
 
 ####################################################
@@ -198,7 +198,7 @@ class Roundtrip_Path_Planner:
             resultList.append(ResultCollection(key,
                                             planner, 
                                             self.environment,
-                                            nx.shortest_path(planner.createGraph(final_graph, 'start', 'goal_1')), # Aufruf der Methode createGraph des Planers
+                                            nx.shortest_path(final_graph,'start','goal_1'), # Aufruf der Methode createGraph des Planers
                                             #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                             IPPerfMonitor.dataFrame()
                                             ))
@@ -206,10 +206,10 @@ class Roundtrip_Path_Planner:
             # Visualisierung der Ergebnisse
             fig_local = plt.figure(figsize=(10,10))
             ax = fig_local.add_subplot(1,1,1)
-            title = f"{self.plannerName} - {resultList[i].benchmark.name}"
-            if resultList[i].solution == []:
+            title = f"{self.plannerName} - {resultList[0].benchmark.name}"
+            if resultList[0].solution == []:
                 title += " (No path found!)"
-            title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
+            title += "\n Assumed complexity level " + str(resultList[0].benchmark.level)
             ax.set_title(title)
             Env_Limits = planner._collisionChecker.getEnvironmentLimits()
             x_Limits = Env_Limits[0]
@@ -222,22 +222,27 @@ class Roundtrip_Path_Planner:
             ax.set_ylabel('Y-Achse')
             ax.grid(True)
 
+            print("roundtrip first")
+
             # Save Solution in whole_solution as tuple of x and y coordinates
-            graph = resultList[i].planner.graph
-            solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+            graph = resultList[0].planner.graph
+            solution = resultList[0].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
             # Füge die formatierte Version der SolutionNode hinzu
             for node in solution:
                 if 'pos' in graph.nodes[node]:
                     x = graph.nodes[node]['pos'][0]
                     y = graph.nodes[node]['pos'][1]
                     whole_solution.append((x, y))
-            
+
+            print("roundtrip pre wholesolution")
             # Füge das Ziel der aktuellen Lösung hinzu
-            whole_solution.append((pastgoals[i][0], pastgoals[i][1]))
+            whole_solution.append((pastgoals[0][0], pastgoals[0][1]))
             print(f"whole solution after adding goal: {whole_solution}")
 
+
+            print("roundtrip pre visualize")
             try:
-                self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+                self.config[resultList[0].plannerFactoryName][2](resultList[0].planner, resultList[0].solution, ax=ax, nodeSize=100)
             except Exception as e:
                 print (f"Visualizing error for planner {key}: {e}")
                 print(f"Exception details: {e}")
@@ -248,7 +253,7 @@ class Roundtrip_Path_Planner:
             print(f"Exception details: {e}")
             pass
 
-        usedstart = pastgoals[i]
+        usedstart = pastgoals[0]
         print(f"New Usedstart: {usedstart}")
 
 
@@ -257,7 +262,7 @@ class Roundtrip_Path_Planner:
 
 #####################################################
 
-        for i in range(len(pastgoals)):
+        for i in range(len(pastgoals)-1):
             
             print(f"Startpos: {usedstart}")
             print(f"Goalpos: {pastgoals}")
@@ -266,20 +271,19 @@ class Roundtrip_Path_Planner:
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment,
-                                                nx.shortest_path(planner.createGraph(final_graph, f'goal_{i+1}', f'goal_{i+2}')), # Aufruf der Methode createGraph des Planers
+                                                nx.shortest_path(final_graph, f'goal_{i+1}', f'goal_{i+2}'), # Aufruf der Methode createGraph des Planers
                                                 #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
-                                                IPPerfMonitor.dataFrame(),
-                                                print(f"hat zwischenziel")  
+                                                IPPerfMonitor.dataFrame() 
                                                 ))
-         
-
+            
+                print("pre  visualisierung ")
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
                 ax = fig_local.add_subplot(1,1,1)
-                title = f"{self.plannerName} - {resultList[i].benchmark.name}"
-                if resultList[i].solution == []:
+                title = f"{self.plannerName} - {resultList[i+1].benchmark.name}"
+                if resultList[i+1].solution == []:
                     title += " (No path found!)"
-                title += "\n Assumed complexity level " + str(resultList[i].benchmark.level)
+                title += "\n Assumed complexity level " + str(resultList[i+1].benchmark.level)
                 ax.set_title(title)
                 Env_Limits = planner._collisionChecker.getEnvironmentLimits()
                 x_Limits = Env_Limits[0]
@@ -292,9 +296,10 @@ class Roundtrip_Path_Planner:
                 ax.set_ylabel('Y-Achse')
                 ax.grid(True)
 
+                print("pre wholesolutin")
                 # Save Solution in whole_solution as tuple of x and y coordinates
-                graph = resultList[i].planner.graph
-                solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+                graph = resultList[i+1].planner.graph
+                solution = resultList[i+1].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
                 # Füge die formatierte Version der SolutionNode hinzu
                 for node in solution:
                     if 'pos' in graph.nodes[node]:
@@ -303,11 +308,12 @@ class Roundtrip_Path_Planner:
                         whole_solution.append((x, y))
                 
                 # Füge das Ziel der aktuellen Lösung hinzu
-                whole_solution.append((pastgoals[i][0], pastgoals[i][1]))
+                whole_solution.append((pastgoals[i+1][0], pastgoals[i+1][1]))
                 print(f"whole solution after adding goal: {whole_solution}")
+                print("pre visualize")
 
                 try:
-                    self.config[resultList[i].plannerFactoryName][2](resultList[i].planner, resultList[i].solution, ax=ax, nodeSize=100)
+                    self.config[resultList[i+1].plannerFactoryName][2](resultList[i+1].planner, resultList[i+1].solution, ax=ax, nodeSize=100)
                 except Exception as e:
                     print (f"Visualizing error for planner {key}: {e}")
                     print(f"Exception details: {e}")
@@ -318,7 +324,7 @@ class Roundtrip_Path_Planner:
                 print(f"Exception details: {e}")
                 pass
 
-            usedstart = pastgoals[i]
+            usedstart = pastgoals[i+1]
             print(f"New Usedstart: {usedstart}")
 
 

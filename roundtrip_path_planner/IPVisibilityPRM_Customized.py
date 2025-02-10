@@ -213,7 +213,7 @@ class VisPRM_Custom(PRMBase):
                 self._learnRoadmap(step_size)
 
                 print("Knoten im Graphen:")
-                print(self.graph.nodes(data=True))  # Gibt alle Knoten und Attribute aus
+                print(self.graph.nodes())  # Gibt alle Knoten und Attribute aus
 
                 print("\nKanten im Graphen:")
                 print(self.graph.edges())  # Gibt alle Verbindungen aus
@@ -227,7 +227,7 @@ class VisPRM_Custom(PRMBase):
                     NotRoadmap = ["start"]
                     for i in range(len(checkedGoalList)):
                         NotRoadmap.append(f"goal_{i+1}")
-                    print("Liste der Knoten im Graph:", NotRoadmap)
+                    print("Liste der Knoten im Graph (NotRoadmap):", NotRoadmap)
                     
                    
                     posList = nx.get_node_attributes(self.graph,'pos')
@@ -236,21 +236,28 @@ class VisPRM_Custom(PRMBase):
                     
                     result = kdTree.query(checkedStartList[0],k=5)
                     print("result:", result)
-                    for node in result[1] and node not in NotRoadmap:
-                        if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                            self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-                            self.graph.add_edge("start", list(posList.keys())[node])
-                            print("Startknoten mit Roadmap verbunden")
-                            break
-                    for i in range(0, len(checkedGoalList)):
-                        result = kdTree.query(checkedGoalList[i],k=5)
-                        for node in result[1] and node not in NotRoadmap:
-                            if not self._collisionChecker.lineInCollision(checkedGoalList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
-                                self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
-                                self.graph.add_edge(f"goal_{i+1}", list(posList.keys())[node])
-                                print(f"Zielknoten {i} mit Roadmap verbunden")
+                    for node in result[1]:
+                        target_node = list(posList.keys())[node]
+                        if target_node not in NotRoadmap:   
+                            if not self._collisionChecker.lineInCollision(checkedStartList[0],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                                self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
+                                self.graph.add_edge("start", list(posList.keys())[node])
+                                print("Startknoten mit Roadmap verbunden")
                                 break
 
+                    for i in range(0, len(checkedGoalList)):
+                        result = kdTree.query(checkedGoalList[i],k=5)
+                        for node in result[1]:
+                            target_node = list(posList.keys())[node]
+                            if target_node not in NotRoadmap:
+                                if not self._collisionChecker.lineInCollision(checkedGoalList[i],self.graph.nodes()[list(posList.keys())[node]]['pos']):
+                                    self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
+                                    self.graph.add_edge(f"goal_{i+1}", list(posList.keys())[node])
+                                    print(f"Zielknoten {i} mit Roadmap verbunden")
+                                    break
+
+                    print("\nKanten im Graphen:")
+                    print(self.graph.edges())  # Gibt alle Verbindungen aus
                     
                     print("Start-Knoten in Graph:", "start" in self.graph)
                     print("Ziel-Knoten in Graph:", "goal_1" in self.graph)
@@ -266,8 +273,11 @@ class VisPRM_Custom(PRMBase):
                         print ('erster testpfad wurde gefunden')
                         for i in range(0, len(checkedGoalList)-1):
                             test_path = nx.shortest_path(self.graph,f"goal_{i+1}",f"goal_{i+2}")
-                        print("Kürzester Pfad gefunden")
-                                                
+                            print("Kürzester Pfad gefunden")
+                    except:
+                        continue
+
+                    try:                            
                         # connect all nodes that can see each other - for shorter paths with the same nodes
                         for node in self.graph.nodes():
                             if self.graph.nodes[node].get('NodeType') != 'Guard':
