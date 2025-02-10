@@ -186,9 +186,7 @@ class Roundtrip_Path_Planner:
 
 
 
-####################################################
-
-        
+        """####################################################
 
         try:
             
@@ -247,21 +245,22 @@ class Roundtrip_Path_Planner:
         except Exception as e:
             print("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR\nMulti Query, PRM Planning")
             print(f"Exception details: {e}")
-            pass
+            pass"""
 
 
 
 ####################################################
-
-        try:
-            """resultList.append(ResultCollection(key,
+        """
+        try: # Funktion doppelt vorhanden ?
+            resultList.append(ResultCollection(key,
                                             planner, 
                                             self.environment,
                                             nx.shortest_path(final_graph, 'start', 'goal_1'), # Aufruf der Methode createGraph des Planers
                                             #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                             IPPerfMonitor.dataFrame()
-                                            ))"""
+                                            ))
                             
+            print('i-ter durchlauf: ', i)
             # Visualisierung der Ergebnisse
             fig_local = plt.figure(figsize=(10,10))
             ax = fig_local.add_subplot(1,1,1)
@@ -303,14 +302,14 @@ class Roundtrip_Path_Planner:
                 pass
 
         except Exception as e:
-            print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
+            print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR")
             print(f"Exception details: {e}")
             pass
 
         usedstart = pastgoals[i]
         print(f"New Usedstart: {usedstart}")
 
-
+        """
 
 
 
@@ -320,8 +319,12 @@ class Roundtrip_Path_Planner:
             
             print(f"Startpos: {usedstart}")
             print(f"Goalpos: {pastgoals}")
-
-            try:
+            print('Vor final_graph. i: ', i)
+            print('Producer: ', producer[1])
+            final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+            print('Im final Graph: ', final_graph)
+            #try:
+            if True:
                 resultList.append(ResultCollection(key,
                                                 planner, 
                                                 self.environment,
@@ -370,13 +373,15 @@ class Roundtrip_Path_Planner:
                     print(f"Exception details: {e}")
                     pass
 
-            except Exception as e:
-                print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR ")
-                print(f"Exception details: {e}")
-                pass
+            #except Exception as e:
+            #    print ("PLANNING ERROR ! PLANNING ERROR ! PLANNING ERROR duplikat")
+            #    print(f"Exception details: {e}")
+            #    pass
 
             usedstart = pastgoals[i]
             print(f"New Usedstart: {usedstart}")
+
+
 
 
         vollstaendiger_pfad = True

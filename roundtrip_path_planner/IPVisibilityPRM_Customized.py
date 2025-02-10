@@ -191,16 +191,20 @@ class VisPRM_Custom(PRMBase):
             self.graph.add_node(f"goal_{i+1}", pos=checkedGoalList[i], color='lightgreen')
             if i > 0 and all_nodes_are_visible == True:
                 self.graph.add_edge(f"goal_{i}", f"goal_{i+1}")
-        if all_nodes_are_visible == True:
-            return self.graph
         
-        # if start and goal are not visible to each other build roadmap
-        else:
+        if all_nodes_are_visible == True:
+            print('All nodes are visible')
+            return self.graph
+            
+        
+        else: # if start and goal are not visible to each other build roadmap
             # Aufteilen der ntry in kleinere Schritte
             step_size = 10  # Anzahl der Versuche pro Schritt
+            print("Config, Num Nodes:", config["ntry"])
+            print("Config, Datatype:", type(config["ntry"]))
             for i in range(0, config["ntry"]//step_size):
                 self._learnRoadmap(step_size)
-
+                print('i:', i)
                 try:
                     
 
