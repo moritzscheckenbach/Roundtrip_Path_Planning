@@ -1,42 +1,70 @@
-# Roundtrip_Path_Planning
-
+# Roundtrip Path Planning
+ 
 Project Assignment: Roundtrip Path Planning
-
-Your task is to implement and evaluate a roundtrip path planner for a robotic navigation system. The planner will compute a collision-free path from a given starting position through multiple target positions, visiting each target exactly once. You will design the planner to support different path-planning algorithms and ensure a modular interface. Additionally, you will develop and evaluate a customized version of the Visibility PRM that leverages its unique advantages.
-
-Task 
-  1: Roundtrip Path Planner:
-    Input:
-      A defined start position.
-      Multiple target positions to visit exactly once.
-    Output:
-      A collision-free path encoded to distinguish the start point, collision-free intermediate paths, and target points.
-  Features:
-  The path-planning algorithm should be selectable and passed as an argument to the planner.
-Ensure modularity and compatibility with existing path-planning interfaces.
-
-2. Evaluation:
-  Use Basic PRM, Lazy PRM, and Visibility PRM algorithms.
-  Test the planner on at least five benchmark environments.
-  Present results graphically, including solution paths, and discuss performance metrics.
-  Develop a customized version of the Visibility PRM to enhance its effectiveness, evaluate it on the same benchmarks, and compare the results.
-
-Design Considerations
-1. Ensure the planner is modular and integrates seamlessly with other planners.
-2. Evaluate paths based on length, smoothness, computational time, and obstacle avoidance.
-3. Consider optimizing or smoothing the computed paths as part of the solution, it should be discussed in the presentation.
-
+ 
+## Project overview
+The task was to create a roundtrip path planner which would compute path with one start position and multiple goals. The solution makes use of serveral probability roadmap algorithms (RRMs)
+1. Basic PRM
+2. Lazy PRM
+3. Visibility PRM
+ 
+and a Customized version of the visibility PRM:
+ 
+4. Visibility PRM with
+    - Early stopping
+    - Crossconnected nodes
+ 
+## Setup Instructions
+ 
+This repository contains all the required PRM algorithms, testing environments and an evaluation environment. To install the project locally, follow these steps:
+### 1. Clone the Repository
+   ```sh
+   git clone https://github.com/moritzscheckenbach/Roundtrip_Path_Planning
+   ```
+### 2. make sure you have the following python librarys installed:
+- copy
+- descartes
+- heapq
+- math
+- matplotlib
+- networkX
+- numpy
+- pandas
+- random
+- scipy
+- shapely
+- sys
+- time
+ 
+### 3. make sure you have a version of [Jupyter Notebook](https://jupyter.org/) installed
+ 
+ 
+## Usage Instructions
+ 
+To jump right into using the project, open any of the Evaluation_xxxxx.ipynb files. You will find a Jupyter Notebook with the following content:
+ 
+ 
+ 
+## Benchmarking
+ 
+You can find a comparison of the PRMs within the Evaluation_XXXX.pynb files, at the bottom.
+ 
+ 
+#########################################################################
+ 
 Deliverables
 1. Code:
   Submit your implementation in a well-organized GitHub repository.
-  Include a README file with instructions for setup, usage, and benchmarking.
-2. Presentation:
-  Present your results using one of the following formats: A PowerPoint presentation.
-  A Jupyter Notebook.
+  Include a README file with instructions for
+  - setup,
+  - usage, and
+  - benchmarking.
+ 
+ 
 3. Documentation:
-Explain the rationale behind your design decisions, including:
+  Explain the rationale behind your design decisions, including:
   How the algorithms were chosen and implemented.
   Steps taken to optimize or smooth the motion paths.
   Challenges faced during the development and how they were addressed.
-Include an analysis of the results, highlighting metrics such as path efficiency and computational performance.
-Please check the notebook "Profiling_pstats_example" and "IP-X-0- Automated_PlanerTest" for profiling and statistics.
+  Include an analysis of the results, highlighting metrics such as path efficiency and computational performance.
+  Please check the notebook "Profiling_pstats_example" and "IP-X-0- Automated_PlanerTest" for profiling and statistics.
