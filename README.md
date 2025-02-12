@@ -1,27 +1,32 @@
 # Roundtrip Path Planning
- 
+
 Project Assignment: Roundtrip Path Planning
- 
+
 ## Project overview
+
 The task was to create a roundtrip path planner which would compute path with one start position and multiple goals. The solution makes use of serveral probability roadmap algorithms (RRMs)
 1. Basic PRM
 2. Lazy PRM
 3. Visibility PRM
- 
+
 and a Customized version of the visibility PRM:
- 
+
 4. Visibility PRM with
     - Early stopping
     - Crossconnected nodes
- 
+
 ## Setup Instructions
- 
+
 This repository contains all the required PRM algorithms, testing environments and an evaluation environment. To install the project locally, follow these steps:
+
 ### 1. Clone the Repository
+
    ```sh
    git clone https://github.com/moritzscheckenbach/Roundtrip_Path_Planning
    ```
+
 ### 2. make sure you have the following python librarys installed:
+
 - copy
 - descartes
 - heapq
