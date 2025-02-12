@@ -5,6 +5,7 @@ Project Assignment: Roundtrip Path Planning
 ## Project overview
 
 The task was to create a roundtrip path planner which would compute path with one start position and multiple goals. The solution makes use of serveral probability roadmap algorithms (RRMs)
+
 1. Basic PRM
 2. Lazy PRM
 3. Visibility PRM
