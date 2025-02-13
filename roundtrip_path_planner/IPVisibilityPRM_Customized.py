@@ -229,11 +229,12 @@ class VisPRM_Custom(PRMBase):
                         NotRoadmap.append(f"goal_{i+1}")
                     print("Liste der Knoten im Graph (NotRoadmap):", NotRoadmap)
                     
-                   
                     posList = nx.get_node_attributes(self.graph,'pos')
                     print("PosList:", posList)
                     kdTree = cKDTree(list(posList.values()))
                     
+                    print(checkedStartList[0])
+
                     result = kdTree.query(checkedStartList[0],k=5)
                     print("result:", result)
                     for node in result[1]:
@@ -256,15 +257,12 @@ class VisPRM_Custom(PRMBase):
                                     print(f"Zielknoten {i} mit Roadmap verbunden")
                                     break
 
-                    print("\nKanten im Graphen:")
-                    print(self.graph.edges())  # Gibt alle Verbindungen aus
-                    
-                    print("Start-Knoten in Graph:", "start" in self.graph)
-                    print("Ziel-Knoten in Graph:", "goal_1" in self.graph)
-
-
-                    print("Start-Knoten Nachbarn:", list(self.graph.neighbors("start")))
-                    print("Goal_1 Nachbarn:", list(self.graph.neighbors("goal_1")))
+                    #print("\nKanten im Graphen:")
+                    #print(self.graph.edges())  # Gibt alle Verbindungen aus
+                    #print("Start-Knoten in Graph:", "start" in self.graph)
+                    #print("Ziel-Knoten in Graph:", "goal_1" in self.graph)
+                    #print("Start-Knoten Nachbarn:", list(self.graph.neighbors("start")))
+                    #print("Goal_1 Nachbarn:", list(self.graph.neighbors("goal_1")))
 
 
             

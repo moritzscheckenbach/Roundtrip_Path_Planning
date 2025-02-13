@@ -20,6 +20,8 @@ import networkx as nx
 import heapq
 import math
 import pandas as pd
+import networkx as nx
+from scipy.spatial import cKDTree
 
 import IPAStar
 import IPBasicPRM
@@ -127,29 +129,13 @@ class Roundtrip_Path_Planner:
         self.sortTargetlist = sortTargetlist # sort the targetlist by the shortest distance
 
 
-    # def _getRoadmap(self, config):
-    #     if self.plannerName == "basePRM":
-    #         radius = config["radius"]
-    #         numNodes = config["numNodes"]
-    #         self._learnRoadmapNearestNeighbour(radius, numNodes)
-    #     elif self.plannerName == "lazyPRM":
-    #         initialRoadmapSize = config["initialRoadmapSize"]
-    #         updateRoadmapSize = config["updateRoadmapSize"]
-    #         kNearest = config["kNearest"]
-    #         self._buildRoadmap(initialRoadmapSize, kNearest)
-    #     elif self.plannerName == "visibilityPRM":
-    #         ntry = config["ntry"]
-    #         self._learnRoadmap(ntry)
-    #     elif self.plannerName == "visibilityPRM_custom":
-    #         ntry = config["ntry"]
-    #         self._learnRoadmap(ntry)
 
-
+    # Multi query Planung
     def plan_MQ(self):
         resultList = list()
         key = self.plannerName # key enthält den Nemen des Planers
         producer = self.config[key] # producer enthält alle items der config des Planers
-        print(key, producer) # Key ist der Planer, producer ist der Konstruktor (Vorher definierte Configs [siehe oben])
+        #print(key, producer) # Key ist der Planer, producer ist der Konstruktor (Vorher definierte Configs [siehe oben])
 
         print ("Planning: " + key + " - " + self.environment.name)
         planner = producer[0](self.environment.collisionChecker) # Aufruf erstes Element aus producer (Klasse des Planers) und Aufruf der Methode Benchmark.collisionChecker
@@ -187,27 +173,84 @@ class Roundtrip_Path_Planner:
         else:
             pastgoals = goals
 
-
-
-####################################################
-
         try:
-            final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
-            print(f"nach final graph")
+            if self.plannerName == 'basePRM' or self.plannerName == 'visibilityPRM':
+                resultTemp = list()
+                if self.plannerName == 'basePRM':
+                    resultTemp.append(ResultCollection(
+                        key,
+                        planner,
+                        self.environment,
+                        planner._learnRoadmapNearestNeighbour(radius = 5.0, numNodes = 300), ########## config einfügen
+                        IPPerfMonitor.dataFrame()
+                    ))
+
+                else:
+                    resultTemp.append(ResultCollection(
+                        key,
+                        planner,
+                        self.environment,
+                        planner._learnRoadmap(ntry = 300), ########## config einfügen
+                        IPPerfMonitor.dataFrame()
+                    ))
+                
+                # Liste der Knoten erstellen
+                NotRoadmap = ["start"]
+                for goalnum in range(len(pastgoals)):
+                    NotRoadmap.append(f"goal_{goalnum+1}")
+                #print("Liste der Knoten im Graph (NotRoadmap):", NotRoadmap)
+
+                posList = nx.get_node_attributes(planner.graph,'pos')
+                #print("PosList:", posList)
+                kdTree = cKDTree(list(posList.values()))
+                result = kdTree.query(usedstart,k=5)
+                print("result:", result)
+
+                # Add Start to Solution
+                for node in result[1]:
+                    target_node = list(posList.keys())[node]
+                    if target_node not in NotRoadmap:   
+                        if not planner._collisionChecker.lineInCollision(usedstart,planner.graph.nodes()[list(posList.keys())[node]]['pos']):
+                            planner.graph.add_node("start", pos=usedstart, color='lightgreen')
+                            planner.graph.add_edge("start", list(posList.keys())[node])
+                            print("Startknoten mit Roadmap verbunden")
+                            break
+
+                # Add Start to Solution
+                for goalnum in range(0, len(pastgoals)):
+                    result = kdTree.query(pastgoals[goalnum],k=5)
+                    for node in result[1]:
+                        target_node = list(posList.keys())[node]
+                        if target_node not in NotRoadmap:
+                            if not planner._collisionChecker.lineInCollision(pastgoals[goalnum],planner.graph.nodes()[list(posList.keys())[node]]['pos']):
+                                planner.graph.add_node(f"goal_{goalnum+1}", pos=pastgoals[goalnum], color='lightgreen')
+                                planner.graph.add_edge(f"goal_{goalnum+1}", list(posList.keys())[node])
+                                print(f"Goal_{goalnum+1} mit Roadmap verbunden @ {pastgoals[goalnum]}")
+                                break
+
+                final_graph = planner.graph
+                #print('shortest: ', nx.shortest_path(final_graph,'start','goal_1'))
+
+            elif self.plannerName == 'visibilityPRM_custom':           
+                final_graph = planner.createGraph([usedstart], pastgoals, producer[1])
+                #print('shortest: ', nx.shortest_path(final_graph,'start','goal_1'))
+
+            else:
+                print('NO MULTIQUARY COMPATIBILITY RIGHT NOW')
 
         except:
-            print("no multiquery compatibility right now")
+            print("no multiquery compatibility right now")#
+            pass
 
-
-#####################################################
 
         for i in range(len(pastgoals)):
             
-            print(f"Startpos: {usedstart}")
-            print(f"Goalpos: {pastgoals}")
-            try:
+            #print(f"Startpos: {usedstart}")
+            #print(f"Goalpos: {pastgoals}")
+            try:                
                 if i == 0:
-                    resultList.append(ResultCollection(key,
+                    resultList.append(ResultCollection(
+                                key,
                                 planner, 
                                 self.environment,
                                 nx.shortest_path(final_graph,'start','goal_1'), # Aufruf der Methode createGraph des Planers
@@ -215,14 +258,14 @@ class Roundtrip_Path_Planner:
                                 IPPerfMonitor.dataFrame()
                                 ))
                 else:
-                    resultList.append(ResultCollection(key,
+                    resultList.append(ResultCollection(
+                                key,
                                 planner, 
                                 self.environment,
                                 nx.shortest_path(final_graph, f'goal_{i}', f'goal_{i+1}'), # Aufruf der Methode createGraph des Planers
                                 #planner.planPath([usedstart],[pastgoals[i]],producer[1]), # Aufruf der Methode planPath des Planers
                                 IPPerfMonitor.dataFrame() 
                                 ))
-            
                 # Visualisierung der Ergebnisse
                 fig_local = plt.figure(figsize=(10,10))
                 ax = fig_local.add_subplot(1,1,1)
@@ -244,7 +287,9 @@ class Roundtrip_Path_Planner:
 
                 # Save Solution in whole_solution as tuple of x and y coordinates
                 graph = resultList[i].planner.graph
+                print("Solution: ", resultList[i].solution)
                 solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+                
                 # Füge die formatierte Version der SolutionNode hinzu
                 for node in solution:
                     if 'pos' in graph.nodes[node]:
@@ -269,13 +314,13 @@ class Roundtrip_Path_Planner:
                 pass
 
             usedstart = pastgoals[i]
-            print(f"New Usedstart: {usedstart}")
+            #print(f"New Usedstart: {usedstart}")
 
 
         vollstaendiger_pfad = True
 
         for i in range(len(resultList)):
-            print(f"ResultList: {resultList[i]}")
+            #print(f"ResultList: {resultList[i]}")
             if resultList[i].solution == []:
                 vollstaendiger_pfad = False
                 break
@@ -316,19 +361,20 @@ class Roundtrip_Path_Planner:
                 y_Limits = Env_Limits[1]
                 ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
                 ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
-                ax.legend()
                 ax.grid(True)
                 plt.show()
             except Exception as e:
                 print(f"An error occurred: {e}")
 
         return resultList
-    
+
+
+    # Single Query Planung
     def plan(self):
         resultList = list()
         key = self.plannerName
         producer = self.config[key]
-        print(key, producer)
+        #print(key, producer)
 
         print("Planning: " + key + " - " + self.environment.name)
         planner = producer[0](self.environment.collisionChecker)
@@ -390,7 +436,6 @@ class Roundtrip_Path_Planner:
                 ax.set_xlabel('X-Achse')
                 ax.set_ylabel('Y-Achse')
                 ax.grid(True)
-
 
 
                 # Save Solution in whole_solution as tuple of x and y coordinates
@@ -471,7 +516,6 @@ class Roundtrip_Path_Planner:
                 y_Limits = Env_Limits[1]
                 ax.set_xticks(range(int(x_Limits[0]), int(x_Limits[1]) + 1))
                 ax.set_yticks(range(int(y_Limits[0]), int(y_Limits[1]) + 1))
-                ax.legend()
                 ax.grid(True)
                 plt.show()
             except Exception as e:
