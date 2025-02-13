@@ -402,12 +402,17 @@ class Roundtrip_Path_Planner:
                         whole_solution.append((x, y))
                 
                 # save performance data in a pandas dataframe
-                temp = {"name": [key], 'solution size': len(solution), "time": [resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"]], "graph_size": [planner.graph.size()]}
-                performance_dataframe = pd.DataFrame(temp)
-                #performance_dataframe = pd.DataFrame((len(solution), resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"], planner.graph.size()))
-                #print(performance_dataframe)
-                # append and save performance data in a csv file
-                performance_dataframe.to_csv("performance_data.csv", mode='a', sep =',', header=False)
+                temp = {"name": [key],
+                        "solution size": len(solution),
+                        "time": [resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"]],
+                        "graph_size": [planner.graph.size()]
+                        }
+                if i == 0:
+                    performance_dataframe = pd.DataFrame(temp)
+                    performance_dataframe.to_csv("performance_data.csv", mode='w', sep=',', header=True, index=False)
+                else:
+                    performance_dataframe = pd.DataFrame(temp)
+                    performance_dataframe.to_csv("performance_data.csv", mode='a', sep=',', header=False, index=False)
 
                 # Füge das Ziel der aktuellen Lösung hinzu
                 whole_solution.append((pastgoals[i][0], pastgoals[i][1]))
