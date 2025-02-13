@@ -64,10 +64,11 @@ To jump right into using the project, open any of the Evaluation notebooks under
 ## Benchmarking
 
 You can find a comparison of the PRMs within the Evaluation_XXXX.ipynb files, at the bottom.
-
 Additionally, there are CSV files and images containing several runs on different maps in _________.ipynb / CSV
 
-# EINFÜGEN: Ergebnisse der Auswertung in der EXCEL 
+![Tabelle_EVA_overall_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_overall_Robotikpathplanning.png)
+
+![Tabelle_EVA_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_Robotikpathplanning.png)
 
 An overview over the performance of all four evaluated algorithms over five evaluation runs is shown in the "Robotic Path Planning Evalutation Tabelle.xlsx" file.
 
