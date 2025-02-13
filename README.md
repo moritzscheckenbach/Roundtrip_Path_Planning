@@ -64,13 +64,21 @@ To jump right into using the project, open any of the Evaluation notebooks under
 ## Benchmarking
 
 You can find a comparison of the PRMs within the Evaluation_XXXX.ipynb files, at the bottom.
-Additionally, there are CSV files and images containing several runs on different maps in _________.ipynb / CSV
+Additionally, there is an overview here.
+The performance metrics chosen are the following:
 
-![Tabelle_EVA_overall_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_overall_Robotikpathplanning.png)
+- Roadmap size indicates the total amount of nodes in any given graph
+- Plan time is how long it took to compute the solution
+- Path length is the amount of nodes required from start through all nodes
+- The success factor was introduced to debuff algorithms which did not find a path in one of the three runs.
+
+These metrics were created by averaging the performance criteria of five runs, repeating that on seven maps with three goals each for all PRMs. The tests were only done for single query PRMs because multi-querying would require a complete disassembly and reassembly of the provided project materials.
 
 ![Tabelle_EVA_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_Robotikpathplanning.png)
 
-An overview over the performance of all four evaluated algorithms over five evaluation runs is shown in the "Robotic Path Planning Evalutation Tabelle.xlsx" file.
+The evaluation table shows that in three of the four compared categories the overall best algorithm of the tested ones is the visibilityPRM_custom.
+
+![Tabelle_EVA_overall_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_overall_Robotikpathplanning.png)
 
 # Project Documentation
 
