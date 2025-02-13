@@ -37,6 +37,7 @@ import IPVISAStar
 import IPVISRRT
 
 from IPPerfMonitor import IPPerfMonitor
+import os
 
 
 ###########################
@@ -407,11 +408,12 @@ class Roundtrip_Path_Planner:
                         "time": [resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"]],
                         "graph_size": [planner.graph.size()]
                         }
-                if i == 0:
-                    performance_dataframe = pd.DataFrame(temp)
-                    performance_dataframe.to_csv("performance_data.csv", mode='w', sep=',', header=True, index=False)
+                
+                performance_dataframe = pd.DataFrame(temp)
+
+                if not os.path.isfile("performance_data.csv"):
+                    performance_dataframe.to_csv("performance_data.csv", mode='a', sep=',', header=True, index=False)
                 else:
-                    performance_dataframe = pd.DataFrame(temp)
                     performance_dataframe.to_csv("performance_data.csv", mode='a', sep=',', header=False, index=False)
 
                 # Füge das Ziel der aktuellen Lösung hinzu
