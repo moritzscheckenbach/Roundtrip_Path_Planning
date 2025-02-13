@@ -34,29 +34,17 @@ This repository contains all the required PRM algorithms, testing environments a
 ### 2. make sure you have the following python libraries installed:
 
 - copy
-
 - descartes
-
 - heapq
-
 - math
-
 - matplotlib
-
 - networkX
-
 - numpy
-
 - pandas
-
 - random
-
 - scipy
-
 - shapely
-
 - sys
-
 - time
 
 ### 3. make sure you have a version of [Jupyter Notebook](https://jupyter.org/) installed
@@ -79,19 +67,23 @@ You can find a comparison of the PRMs within the Evaluation_XXXX.ipynb files, at
 
 Additionally, there are CSV files and images containing several runs on different maps in _________.ipynb / CSV
 
+# EINFÜGEN: Ergebnisse der Auswertung in der EXCEL 
+
 An overview over the performance of all four evaluated algorithms over five evaluation runs is shown in the "Robotic Path Planning Evalutation Tabelle.xlsx" file.
 
 # Project Documentation
 
 The algorithms in this project were chosen to cover multiple PRM variants (IPBasicPRM, IPLazyPRM, IPVisibilityPRM) plus a custom extension of visibility PRM with early-stopping and cross-connected nodes.
 
-# EINFÜGEN: Ergebnisse der Auswertung in der EXCEL 
-
 ## Steps taken during the implementation
 
 The main idea of this project was to take already existing programs of probability roadmap algorithm and create an interface to compute a connected path for multiple goals. In the beginning, we started by learning and understanding the source code that was given to us. From there on we decided on the format of the interface: which method can be selected and how do we define the start and goal positions and what will be returned by all subprograms. The following image is an overview on how the roundtrip path planner interacts with these programs:
 
+![RPP_Flowchart](roundtrip_path_planner/Images/RPP_Flowchart.png)
+
 The roundtrip path planner can be used in single-query and multi-query modes. In single-querying, it calculates paths between the start and multiple goals but discards the created maps in between. The final map is created by appending the intermediate roadmaps. Using multi-query mode results in one map with several connections to start and goals, as shown in the following image.
+
+![RPP_Map_display](roundtrip_path_planner/Images/RPP_Map_display.png)
 
 Furthermore, we were supposed to implement an optimized design based on the given visibility PRM. The optimizations include two ideas:
 
@@ -99,15 +91,17 @@ Furthermore, we were supposed to implement an optimized design based on the give
 
 2. Early Stopping, where the creation of the roadmap is interrupted, when start and all goals have a connecting path.
 
+![Visibility_PRM_Comparison](roundtrip_path_planner/Images/Visibility_PRM_Comparison.png)
+
 ## Challenges
 
 ### Ensuring Compatibility Across Algorithms
 
-Some algorithms in this project are single query while others are multi-query. Since their input requirements differ, it was necessary to carefully design interfaces that accommodate diverse planning approaches without creating duplicate code.
+Some algorithms in this project are single-query while others are multi-query. Since their input requirements differ, it was necessary to carefully design interfaces that accommodate diverse planning approaches without creating duplicate code.
 
 ### Visualizing the Complete Solution
 
-A key challenge involved visualizing a unified path constructed from multiple sub-paths. Although the visualization for individual segments was already implemented for each goal, consolidating those segments into a single, comprehensive path posed difficulties. Single query algorithms overwrite internal graphs on each call. To address this, a dedicated “whole solution” variable was introduced to store intermediate paths.
+A key challenge involved visualizing a unified path constructed from multiple sub-paths. Although the visualization for individual segments was already implemented for each goal, consolidating those segments into a single, comprehensive path posed difficulties. Single-query algorithms overwrite internal graphs on each call. To address this, a dedicated “whole solution” variable was introduced to store intermediate paths.
 
 ### Optimizing the Visibility PRM
 
