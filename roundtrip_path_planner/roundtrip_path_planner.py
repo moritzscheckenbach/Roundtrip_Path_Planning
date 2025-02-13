@@ -338,6 +338,8 @@ class Roundtrip_Path_Planner:
         goals = self.targetlist
         pastgoals = []
         whole_solution = []
+        whole_solution.append((self.startpos[0][0], self.startpos[0][1]))
+
 
         if self.sortTargetlist:
             # Sortiere die Ziele nach der kürzesten Distanz

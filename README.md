@@ -4,17 +4,20 @@ Project Assignment: Roundtrip Path Planning
 
 ## Project overview
 
-The task was to create a roundtrip path planner which would compute path with one start position and multiple goals. The solution makes use of serveral probability roadmap algorithms (RRMs)
+The task was to create a roundtrip path planner which would compute a path though obstacles with one start position and multiple goals. The solution makes use of several probability roadmap algorithms (RRMs)
 
 1. Basic PRM
+
 2. Lazy PRM
+
 3. Visibility PRM
 
 and a Customized version of the visibility PRM:
 
 4. Visibility PRM with
+
     - Early stopping
-    - Crossconnected nodes
+    - Cross connected nodes
 
 ## Setup Instructions
 
@@ -23,54 +26,97 @@ This repository contains all the required PRM algorithms, testing environments a
 ### 1. Clone the Repository
 
    ```sh
-   git clone https://github.com/moritzscheckenbach/Roundtrip_Path_Planning
+
+   git clone https://github.com/moritzscheckenbach/Roundtrip_Path_Planning 
+
    ```
 
-### 2. make sure you have the following python librarys installed:
+### 2. make sure you have the following python libraries installed:
 
 - copy
+
 - descartes
+
 - heapq
+
 - math
+
 - matplotlib
+
 - networkX
+
 - numpy
+
 - pandas
+
 - random
+
 - scipy
+
 - shapely
+
 - sys
+
 - time
- 
+
 ### 3. make sure you have a version of [Jupyter Notebook](https://jupyter.org/) installed
- 
- 
-## Usage Instructions
- 
-To jump right into using the project, open any of the Evaluation_xxxxx.ipynb files. You will find a Jupyter Notebook with the following content:
- 
- 
- 
+
+## Usage Instruction
+
+To jump right into using the project, open any of the Evaluation notebooks under >> roundtrip_path_planner >> Evaluation_xxxxxx.ipynb. You will find a Jupyter Notebook with the following content:
+
+1. A notebook cell with library inclusion of project files
+
+2. A cell with the setup, where the environment is selected, and start & goals are defined.
+
+3. Cells with all probability roadmaps on the selected environments with the intermediate paths and completed path.
+
+4. A visualisation of runtime, graph size and path length.
+
 ## Benchmarking
- 
-You can find a comparison of the PRMs within the Evaluation_XXXX.pynb files, at the bottom.
- 
- 
-#########################################################################
- 
-Deliverables
-1. Code:
-  Submit your implementation in a well-organized GitHub repository.
-  Include a README file with instructions for
-  - setup,
-  - usage, and
-  - benchmarking.
- 
- 
-3. Documentation:
-  Explain the rationale behind your design decisions, including:
-  How the algorithms were chosen and implemented.
-  Steps taken to optimize or smooth the motion paths.
-  Challenges faced during the development and how they were addressed.
-  Include an analysis of the results, highlighting metrics such as path efficiency and computational performance.
-  Please check the notebook "Profiling_pstats_example" and "IP-X-0- Automated_PlanerTest" for profiling and statistics.
+
+You can find a comparison of the PRMs within the Evaluation_XXXX.ipynb files, at the bottom.
+
+Additionally, there are CSV files and images containing several runs on different maps in _________.ipynb / CSV
+
+An overview over the performance of all four evaluated algorithms over five evaluation runs is shown in the "Robotic Path Planning Evalutation Tabelle.xlsx" file.
+
+# Project Documentation
+
+The algorithms in this project were chosen to cover multiple PRM variants (IPBasicPRM, IPLazyPRM, IPVisibilityPRM) plus a custom extension of visibility PRM with early-stopping and cross-connected nodes.
+
+# EINFÜGEN: Ergebnisse der Auswertung in der EXCEL 
+
+## Steps taken during the implementation
+
+The main idea of this project was to take already existing programs of probability roadmap algorithm and create an interface to compute a connected path for multiple goals. In the beginning, we started by learning and understanding the source code that was given to us. From there on we decided on the format of the interface: which method can be selected and how do we define the start and goal positions and what will be returned by all subprograms. The following image is an overview on how the roundtrip path planner interacts with these programs:
+
+The roundtrip path planner can be used in single-query and multi-query modes. In single-querying, it calculates paths between the start and multiple goals but discards the created maps in between. The final map is created by appending the intermediate roadmaps. Using multi-query mode results in one map with several connections to start and goals, as shown in the following image.
+
+Furthermore, we were supposed to implement an optimized design based on the given visibility PRM. The optimizations include two ideas:
+
+1. Cross connecting nodes, where connections between guards that see each other receive an edge between them.
+
+2. Early Stopping, where the creation of the roadmap is interrupted, when start and all goals have a connecting path.
+
+## Challenges
+
+### Ensuring Compatibility Across Algorithms
+
+Some algorithms in this project are single query while others are multi-query. Since their input requirements differ, it was necessary to carefully design interfaces that accommodate diverse planning approaches without creating duplicate code.
+
+### Visualizing the Complete Solution
+
+A key challenge involved visualizing a unified path constructed from multiple sub-paths. Although the visualization for individual segments was already implemented for each goal, consolidating those segments into a single, comprehensive path posed difficulties. Single query algorithms overwrite internal graphs on each call. To address this, a dedicated “whole solution” variable was introduced to store intermediate paths.
+
+### Optimizing the Visibility PRM
+
+Integrating optimization steps in the visibility PRM proved complex due to the nature of the collision checker. Ensuring that edges were only added to the roadmap after appropriate collision checks required careful code structure. The requirement that all start, intermediate goals and final goal positions only are allowed to visit exactly once reduced the possibilities for graph optimizations.
+
+### Working with Git
+
+This project served as the team’s introduction to Git, leading to fewer branches and many direct commits to the main branch. Although this approach worked, future projects will incorporate more robust branching and commit strategies.
+
+## Project Submission
+
+This project was the exam for the lecture "Roboterprogrammierung" of the robotics and artificial intelligence master at Hochschule Karlsruhe, University of Applied Sciences. The Solution was submitted by Wesley Glauben, Janik Marten and Moritz Scheckenbach.
