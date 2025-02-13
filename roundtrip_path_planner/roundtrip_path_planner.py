@@ -394,7 +394,12 @@ class Roundtrip_Path_Planner:
 
                 # Save Solution in whole_solution as tuple of x and y coordinates
                 graph = resultList[i].planner.graph
-                solution = resultList[i].solution[1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+                solution = resultList[i].solution
+                if solution != []:
+                    solution = solution [1:-1]  # Ignoriere den ersten und letzten Knoten (start und goal)
+                    len_solution = len(solution)
+                else:
+                    len_solution = "No path found"
                 # Füge die formatierte Version der SolutionNode hinzu
                 for node in solution:
                     if 'pos' in graph.nodes[node]:
@@ -404,7 +409,7 @@ class Roundtrip_Path_Planner:
                 
                 # save performance data in a pandas dataframe
                 temp = {"name": [key],
-                        "solution size": len(solution),
+                        "solution size": len_solution,
                         "time": [resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"]],
                         "graph_size": [planner.graph.size()]
                         }
