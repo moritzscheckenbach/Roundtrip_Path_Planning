@@ -72,13 +72,15 @@ The performance metrics chosen are the following:
 - Path length is the amount of nodes required from start through all nodes
 - The success factor was introduced to debuff algorithms which did not find a path in one of the three runs.
 
-These metrics were created by averaging the performance criteria of five runs, repeating that on seven maps with three goals each for all PRMs. The tests were only done for single query PRMs because the provided algorithms are not compatible with a multi-querying solution. We implemented a multi-query option for our customised VisibilityPRM. But in the scope of the project, we didnt create modified versions of the other PRMs.
+These metrics were created by averaging the performance criteria of five runs, repeating that on seven maps with three goals each for all PRMs. The tests were only done for single query PRMs because the provided algorithms are not compatible with a multi-querying solution.
 
 ![Tabelle_EVA_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_Robotikpathplanning.png)
 
 The evaluation table shows that in three of the four compared categories the overall best algorithm of the tested ones is the visibilityPRM_custom.
 
 ![Tabelle_EVA_overall_Robotikpathplanning](roundtrip_path_planner/Images/Tabelle_EVA_overall_Robotikpathplanning.png)
+
+Aditionally, we implemented a multi-query option for our customised VisibilityPRM, the Basic PRM and Visibility PRM. Since the project description stated, that we were not supposed to change the original source code of the PRMs, we were unable to redesign the Lazy PRM for multi query Map creation. It would have required some fundamental changes in the interface.
 
 # Project Documentation
 

@@ -448,13 +448,6 @@ class Roundtrip_Path_Planner:
                         y = graph.nodes[node]['pos'][1]
                         whole_solution.append((x, y))
                 
-                # save performance data in a pandas dataframe andconvert it to csv
-                temp = {"name": [key], 'solution size': len(solution), "time": [resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"]], "graph_size": [planner.graph.size()]}
-                performance_dataframe = pd.DataFrame(temp)
-                #performance_dataframe = pd.DataFrame((len(solution), resultList[i].perfDataFrame.groupby(["name"]).sum(numeric_only=True)["time"]["planPath"], planner.graph.size()))
-                #print(performance_dataframe)
-                #performance_dataframe.to_csv("performance_data.csv", mode='a', sep =',', header=False)
-
                 # Füge das Ziel der aktuellen Lösung hinzu
                 whole_solution.append((pastgoals[i][0], pastgoals[i][1]))
                 print(f"whole solution after adding goal: {whole_solution}")
